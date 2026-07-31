@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio Fotográfico — Prototipo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,400&family=Work+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+
+  :root{
+    --bg: #0B0B0C;
+    --surface: #17161A;
+    --surface-2: #201F24;
+    --text: #F2EEE8;
+    --text-soft: #A39C92;
+    --amber: #E8A464;
+    --blue: #4E7AA8;
+    --neon: #4EE8C8;
+    --border: rgba(242,238,232,0.10);
+    --font-display: 'Fraunces', serif;
+    --font-body: 'Work Sans', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  html{ scroll-behavior:smooth; }
+
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--font-body);
+    font-weight:400;
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+
+  img{ display:block; max-width:100%; }
+
+  a{ color:inherit; text-decoration:none; }
+
+  .wrap{ max-width:1180px; margin:0 auto; padding:0 32px; }
+
+  /* ---------- bokeh decorativo ---------- */
+  .bokeh{
+    position:absolute;
+    border-radius:50%;
+    filter:blur(28px);
+    opacity:0.35;
+    pointer-events:none;
+    animation:floatBokeh 9s ease-in-out infinite;
+  }
+
+  @keyframes floatBokeh{
+    0%, 100%{ transform:translate(0,0) scale(1); }
+    50%{ transform:translate(-16px, 18px) scale(1.08); }
+  }
+
+  @keyframes fadeUp{
+    from{ opacity:0; transform:translateY(26px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+
+  @keyframes pulseGlow{
+    0%, 100%{ box-shadow:0 0 8px 2px rgba(232,164,100,0.6); }
+    50%{ box-shadow:0 0 16px 5px rgba(232,164,100,0.85); }
+  }
+
+  .reveal{
+    opacity:0;
+    transform:translateY(32px);
+    transition:opacity .8s ease, transform .8s ease;
+  }
+  .reveal.visible{
+    opacity:1;
+    transform:translateY(0);
+  }
+  .reveal.slide-left{ transform:translateX(-48px); }
+  .reveal.slide-left.visible{ transform:none; }
+  .reveal.slide-right{ transform:translateX(48px); }
+  .reveal.slide-right.visible{ transform:none; }
+
+
+  /* ---------- nav ---------- */
+  header{
+    position:fixed;
+    top:0; left:0; right:0;
+    z-index:100;
+    padding:24px 0;
+    transition:background .4s ease, padding .4s ease, border-color .4s ease;
+    border-bottom:1px solid transparent;
+  }
+  header.scrolled{
+    background:rgba(11,11,12,0.85);
+    backdrop-filter:blur(10px);
+    padding:16px 0;
+    border-bottom:1px solid var(--border);
+  }
+  nav{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .logo{
+    font-family:var(--font-display);
+    font-size:20px;
+    font-weight:500;
+    letter-spacing:0.5px;
+  }
+  .nav-links{
+    display:flex;
+    gap:40px;
+    list-style:none;
+    font-size:14px;
+    letter-spacing:0.3px;
+  }
+  .nav-links a{
+    position:relative;
+    color:var(--text-soft);
+    transition:color .3s ease;
+  }
+  .nav-links a:hover{ color:var(--text); }
+  .nav-links a::after{
+    content:'';
+    position:absolute;
+    left:0; bottom:-6px;
+    width:0; height:1px;
+    background:var(--amber);
+    transition:width .3s ease;
+  }
+  .nav-links a:hover::after{ width:100%; }
+  .nav-cta{
+    font-size:13px;
+    font-family:var(--font-mono);
+    border:1px solid var(--border);
+    padding:9px 18px;
+    border-radius:2px;
+    transition:border-color .3s ease, background .3s ease;
+  }
+  .nav-cta:hover{ border-color:var(--neon); background:rgba(78,232,200,0.08); box-shadow:0 0 14px 1px rgba(78,232,200,0.35); }
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;
+    min-height:100vh;
+    display:flex;
+    align-items:flex-end;
+    overflow:hidden;
+  }
+  .hero-bg{
+    position:absolute;
+    inset:0;
+    background-image:url('https://picsum.photos/id/1027/2200/2800');
+    background-size:cover;
+    background-position:center 20%;
+    filter:brightness(0.55) saturate(1.05);
+  }
+  .hero-bg::after{
+    content:'';
+  }
+  .hero-gradient{
+    position:absolute;
+    inset:0;
+    background:linear-gradient(0deg, rgba(11,11,12,0.95) 0%, rgba(11,11,12,0.35) 45%, rgba(11,11,12,0.15) 100%);
+  }
+  .hero-content{
+    position:relative;
+    z-index:2;
+    padding-bottom:96px;
+    max-width:640px;
+  }
+  .hero-eyebrow{
+    font-family:var(--font-mono);
+    font-size:12px;
+    color:var(--amber);
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    margin-bottom:18px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    opacity:0;
+    animation:fadeUp .8s ease .15s forwards;
+  }
+  .hero-eyebrow::before{
+    content:'';
+    width:6px; height:6px;
+    border-radius:50%;
+    background:var(--amber);
+    animation:pulseGlow 2.4s ease-in-out infinite;
+  }
+  .hero h1{
+    font-family:var(--font-display);
+    font-weight:500;
+    font-size:clamp(40px, 6vw, 68px);
+    line-height:1.05;
+    letter-spacing:-0.5px;
+    margin-bottom:20px;
+    opacity:0;
+    animation:fadeUp .8s ease .32s forwards;
+  }
+  .hero h1 em{
+    font-style:italic;
+    font-weight:300;
+    color:var(--text-soft);
+  }
+  .hero p{
+    font-size:16px;
+    color:var(--text-soft);
+    max-width:440px;
+    margin-bottom:32px;
+    opacity:0;
+    animation:fadeUp .8s ease .5s forwards;
+  }
+  .hero-actions{
+    display:flex;
+    gap:16px;
+    align-items:center;
+    opacity:0;
+    animation:fadeUp .8s ease .68s forwards;
+  }
+  .btn-primary{
+    font-family:var(--font-mono);
+    font-size:13px;
+    background:var(--text);
+    color:var(--bg);
+    padding:14px 26px;
+    border-radius:2px;
+    transition:background .3s ease, transform .3s ease;
+    display:inline-block;
+  }
+  .btn-primary:hover{ background:var(--amber); transform:translateY(-2px); box-shadow:0 0 20px 2px rgba(232,164,100,0.35); }
+  .btn-ghost{
+    font-family:var(--font-mono);
+    font-size:13px;
+    color:var(--text-soft);
+    padding:14px 10px;
+    border-bottom:1px solid var(--border);
+    transition:color .3s ease, border-color .3s ease;
+  }
+  .btn-ghost:hover{ color:var(--text); border-color:var(--amber); }
+
+  .scroll-cue{
+    position:absolute;
+    right:32px;
+    bottom:40px;
+    z-index:2;
+    writing-mode:vertical-rl;
+    font-family:var(--font-mono);
+    font-size:11px;
+    color:var(--text-soft);
+    letter-spacing:2px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+  .scroll-cue::after{
+    content:'';
+    width:1px; height:48px;
+    background:var(--border);
+  }
+
+  /* ---------- section shared ---------- */
+  section{ padding:120px 0; position:relative; }
+
+  .section-divider{
+    position:relative;
+    height:1px;
+    max-width:1180px;
+    margin:0 auto;
+    background:var(--border);
+  }
+  .section-divider::before{
+    content:'';
+    position:absolute;
+    left:50%; top:50%;
+    transform:translate(-50%,-50%);
+    width:5px; height:5px;
+    border-radius:50%;
+    background:var(--amber);
+    box-shadow:0 0 8px 2px rgba(232,164,100,0.45);
+  }
+  .section-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    margin-bottom:56px;
+    gap:24px;
+    flex-wrap:wrap;
+  }
+  .section-eyebrow{
+    font-family:var(--font-mono);
+    font-size:12px;
+    color:var(--amber);
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    margin-bottom:14px;
+  }
+  .section-head h2{
+    font-family:var(--font-display);
+    font-weight:500;
+    font-size:clamp(28px, 4vw, 42px);
+    letter-spacing:-0.3px;
+  }
+  .section-head p{
+    color:var(--text-soft);
+    max-width:340px;
+    font-size:14px;
+  }
+
+  /* ---------- galería destacada ---------- */
+  .gallery{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:20px;
+  }
+  .gallery-item{
+    position:relative;
+    aspect-ratio:3/4;
+    overflow:hidden;
+    border-radius:3px;
+    background:var(--surface);
+  }
+  .gallery-item:nth-child(1){ grid-row:span 2; aspect-ratio:auto; }
+  .gallery-item img{
+    width:100%; height:100%;
+    object-fit:cover;
+    filter:brightness(0.8) saturate(1.05);
+    transition:transform .6s ease, filter .6s ease;
+  }
+  .gallery-item{ transition:box-shadow .5s ease, opacity .8s ease, transform .8s ease; }
+  .gallery-item:hover{ box-shadow:0 0 0 1px rgba(78,232,200,0.4), 0 0 24px 2px rgba(78,232,200,0.15); }
+  .gallery-item:hover img{ transform:scale(1.06); filter:brightness(0.95) saturate(1.1); }
+  .gallery-item.reveal{ transform:translateY(40px) scale(0.97); }
+  .gallery-item:nth-child(1).reveal{ transition-delay:0s; }
+  .gallery-item:nth-child(2).reveal{ transition-delay:.1s; }
+  .gallery-item:nth-child(3).reveal{ transition-delay:.2s; }
+  .gallery-item:nth-child(4).reveal{ transition-delay:.3s; }
+  .gallery-item:nth-child(5).reveal{ transition-delay:.4s; }
+  .gallery-item.visible{ transform:none; }
+  .gallery-caption{
+    position:absolute;
+    left:0; right:0; bottom:0;
+    padding:20px;
+    background:linear-gradient(0deg, rgba(0,0,0,0.75), transparent);
+    opacity:0;
+    transform:translateY(8px);
+    transition:opacity .4s ease, transform .4s ease;
+  }
+  .gallery-item:hover .gallery-caption{ opacity:1; transform:translateY(0); }
+  .gallery-caption p{ font-size:13px; font-family:var(--font-mono); color:var(--text-soft); }
+  .gallery-caption strong{ display:block; font-family:var(--font-display); font-size:18px; font-weight:500; margin-bottom:2px; }
+
+  /* ---------- sobre mí teaser ---------- */
+  .about{
+    display:grid;
+    grid-template-columns:0.8fr 1fr;
+    gap:64px;
+    align-items:center;
+  }
+  .about-img{
+    position:relative;
+    aspect-ratio:4/5;
+    border-radius:3px;
+    overflow:hidden;
+  }
+  .about-img img{ width:100%; height:100%; object-fit:cover; filter:brightness(0.75); }
+  .about-text .section-eyebrow{ margin-bottom:14px; }
+  .about-text h2{
+    font-family:var(--font-display);
+    font-weight:500;
+    font-size:clamp(26px, 3.5vw, 36px);
+    margin-bottom:20px;
+    line-height:1.2;
+  }
+  .about-text p{ color:var(--text-soft); margin-bottom:28px; max-width:440px; }
+  .about-stats{
+    display:flex;
+    gap:40px;
+    margin-bottom:32px;
+  }
+  .stat strong{
+    display:block;
+    font-family:var(--font-display);
+    font-size:28px;
+    color:var(--amber);
+  }
+  .stat span{
+    font-family:var(--font-mono);
+    font-size:11px;
+    color:var(--text-soft);
+    text-transform:uppercase;
+    letter-spacing:1px;
+  }
+
+  /* ---------- blog teaser ---------- */
+  .blog-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:28px;
+  }
+  .post-card{
+    border:1px solid var(--border);
+    border-radius:3px;
+    overflow:hidden;
+    transition:border-color .3s ease, transform .3s ease;
+  }
+  .post-card:hover{ border-color:var(--amber); transform:translateY(-4px); }
+  .post-img{ aspect-ratio:16/10; overflow:hidden; }
+  .post-img img{ width:100%; height:100%; object-fit:cover; filter:brightness(0.8); }
+  .post-body{ padding:22px; }
+  .post-meta{
+    font-family:var(--font-mono);
+    font-size:11px;
+    color:var(--amber);
+    text-transform:uppercase;
+    letter-spacing:1px;
+    margin-bottom:10px;
+  }
+  .post-body h3{
+    font-family:var(--font-display);
+    font-weight:500;
+    font-size:19px;
+    margin-bottom:8px;
+    line-height:1.3;
+  }
+  .post-body p{ font-size:13px; color:var(--text-soft); }
+
+  /* ---------- contacto CTA ---------- */
+  .cta{
+    text-align:center;
+    padding:140px 0;
+  }
+  .cta .section-eyebrow{ justify-content:center; display:flex; }
+  .cta h2{
+    font-family:var(--font-display);
+    font-weight:500;
+    font-size:clamp(32px, 5vw, 56px);
+    max-width:680px;
+    margin:0 auto 32px;
+    line-height:1.15;
+  }
+  .cta h2 em{ font-style:italic; color:var(--neon); font-weight:300; text-shadow:0 0 18px rgba(78,232,200,0.35); }
+  .cta-actions{ display:flex; gap:20px; justify-content:center; }
+
+  /* ---------- footer ---------- */
+  footer{
+    border-top:1px solid var(--border);
+    padding:48px 0;
+  }
+  .footer-inner{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:20px;
+  }
+  .footer-links{
+    display:flex;
+    gap:28px;
+    list-style:none;
+    font-size:13px;
+    color:var(--text-soft);
+  }
+  .footer-links a:hover{ color:var(--amber); }
+  .footer-meta{
+    font-family:var(--font-mono);
+    font-size:12px;
+    color:var(--text-soft);
+  }
+
+  /* ---------- responsive ---------- */
+  @media (max-width:860px){
+    .nav-links{ display:none; }
+    section{ padding:80px 0; }
+    .section-head{ margin-bottom:40px; }
+    .gallery{ grid-template-columns:1fr 1fr; gap:14px; }
+    .gallery-item:nth-child(1){ grid-column:span 2; grid-row:span 1; aspect-ratio:16/10; }
+    .about{ grid-template-columns:1fr; gap:40px; }
+    .about-img{ order:-1; }
+    .blog-grid{ grid-template-columns:1fr; gap:20px; }
+  }
+  @media (max-width:560px){
+    .wrap{ padding:0 20px; }
+    section{ padding:64px 0; }
+    .section-head{ margin-bottom:32px; }
+    .gallery{ grid-template-columns:1fr; gap:16px; }
+    .gallery-item:nth-child(1){ grid-column:auto; aspect-ratio:4/5; }
+    .hero-content{ padding-bottom:56px; max-width:100%; }
+    .hero p{ max-width:100%; }
+    .hero-actions{ flex-wrap:wrap; gap:12px; }
+    .scroll-cue{ display:none; }
+    .nav-cta{ padding:8px 14px; font-size:12px; }
+    .about-stats{ gap:24px; flex-wrap:wrap; }
+    .cta{ padding:96px 0; }
+    .cta-actions{ flex-direction:column; width:100%; }
+    .cta-actions a{ width:100%; text-align:center; }
+    .post-body{ padding:18px; }
+  }
+
+  /* ---------- focus visible ---------- */
+  a:focus-visible, button:focus-visible{
+    outline:1px solid var(--amber);
+    outline-offset:3px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition:none !important; scroll-behavior:auto !important; }
+  }
+</style>
+</head>
+<body>
+
+<header id="siteHeader">
+  <div class="wrap">
+    <nav>
+      <a href="#" class="logo">nicocasti_</a>
+      <ul class="nav-links">
+        <li><a href="#galeria">Galerías</a></li>
+        <li><a href="#sobre-mi">Sobre mí</a></li>
+        <li><a href="#blog">Blog</a></li>
+        <li><a href="#contacto">Contacto</a></li>
+      </ul>
+      <a href="#contacto" class="nav-cta">Reservar sesión</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-gradient"></div>
+  <div class="bokeh" style="width:180px;height:180px;background:var(--amber);top:12%;right:14%;animation-duration:10s;"></div>
+  <div class="bokeh" style="width:90px;height:90px;background:var(--blue);top:28%;right:24%;opacity:0.25;animation-duration:7s;"></div>
+  <div class="bokeh" style="width:60px;height:60px;background:var(--neon);top:8%;right:32%;opacity:0.3;animation-duration:8s;animation-delay:-3s;"></div>
+  <div class="wrap">
+    <div class="hero-content">
+      <p class="hero-eyebrow">nicocasti · Buenos Aires · Since 1992</p>
+      <h1>Retratos que sostienen<br><em>una mirada.</em></h1>
+      <p>Sesiones de retrato con dirección de luz cinematográfica. Cada sesión busca un momento real, no una pose.</p>
+      <div class="hero-actions">
+        <a href="#galeria" class="btn-primary">Ver portfolio</a>
+        <a href="#contacto" class="btn-ghost">Reservar sesión →</a>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">Scroll</div>
+</section>
+
+<div class="section-divider"></div>
+
+<section id="galeria">
+  <div class="wrap">
+    <div class="section-head reveal slide-left">
+      <div>
+        <p class="section-eyebrow">Trabajo seleccionado</p>
+        <h2>Últimas sesiones</h2>
+      </div>
+      <p>Una selección curada de retratos recientes. La galería completa está organizada por categoría.</p>
+    </div>
+    <div class="gallery">
+      <div class="gallery-item reveal">
+        <img src="https://picsum.photos/id/1005/700/900" alt="Retrato en luz nocturna">
+        <div class="gallery-caption"><strong>Vera</strong><p>Retrato · Editorial</p></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="https://picsum.photos/id/1011/500/450" alt="Retrato con luz natural">
+        <div class="gallery-caption"><strong>Nico</strong><p>Retrato · Estudio</p></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="https://picsum.photos/id/1012/500/450" alt="Retrato urbano">
+        <div class="gallery-caption"><strong>Sole</strong><p>Retrato · Urbano</p></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="https://picsum.photos/id/1027/500/450" alt="Retrato de moda">
+        <div class="gallery-caption"><strong>Fer</strong><p>Retrato · Moda</p></div>
+      </div>
+      <div class="gallery-item reveal">
+        <img src="https://picsum.photos/id/1025/500/450" alt="Retrato en exteriores">
+        <div class="gallery-caption"><strong>Julia</strong><p>Retrato · Exterior</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<section id="sobre-mi">
+  <div class="wrap">
+    <div class="about">
+      <div class="about-img reveal slide-left" style="transition-delay:0s;">
+        <img src="./images/nicocasti.jpeg" alt="Retrato del fotógrafo">
+      </div>
+      <div class="about-text reveal slide-right" style="transition-delay:.18s;">
+        <p class="section-eyebrow">Sobre mí</p>
+        <h2>Diez años buscando la luz correcta antes de apretar el obturador.</h2>
+        <p>Especializado en retrato editorial y de estudio, con un enfoque en dirección de luz y momentos genuinos. Cada sesión se planifica como una pequeña producción.</p>
+        <div class="about-stats">
+          <div class="stat"><strong>200+</strong><span>Sesiones</span></div>
+          <div class="stat"><strong>10</strong><span>Años</span></div>
+          <div class="stat"><strong>4</strong><span>Publicaciones</span></div>
+        </div>
+        <a href="#" class="btn-ghost">Conocer más →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<section id="blog">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <p class="section-eyebrow reveal" style="transition-delay:0s;">Diario</p>
+        <h2 class="reveal" style="transition-delay:.15s;">Últimas notas</h2>
+      </div>
+      <p class="reveal" style="transition-delay:.3s;">Detrás de escena de las sesiones y reflexiones sobre el oficio.</p>
+    </div>
+    <div class="blog-grid reveal">
+      <a href="#" class="post-card">
+        <div class="post-img"><img src="https://picsum.photos/id/1074/500/320" alt=""></div>
+        <div class="post-body">
+          <p class="post-meta">Detrás de escena</p>
+          <h3>Cómo armamos la sesión de Vera en 20 minutos de luz</h3>
+          <p>La ventana de luz dorada es corta. Así planificamos cada toma antes.</p>
+        </div>
+      </a>
+      <a href="#" class="post-card">
+        <div class="post-img"><img src="https://picsum.photos/id/1080/500/320" alt=""></div>
+        <div class="post-body">
+          <p class="post-meta">Técnica</p>
+          <h3>Tres formas de usar luces de neón en retrato</h3>
+          <p>Color, contraste y una fuente de luz que no necesita difusor.</p>
+        </div>
+      </a>
+      <a href="#" class="post-card">
+        <div class="post-img"><img src="https://picsum.photos/id/1084/500/320" alt=""></div>
+        <div class="post-body">
+          <p class="post-meta">Reflexión</p>
+          <h3>Por qué dirijo menos de lo que parece</h3>
+          <p>El mejor retrato aparece cuando la persona se olvida de la cámara.</p>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<section class="cta" id="contacto">
+  <div class="wrap">
+    <p class="section-eyebrow reveal" style="transition-delay:0s;">Reservá tu sesión</p>
+    <h2 class="reveal" style="transition-delay:.15s;">Hablemos de tu <em>próximo retrato.</em></h2>
+    <div class="cta-actions reveal" style="transition-delay:.3s;">
+      <a href="mailto:hola@ejemplo.com" class="btn-primary">Escribir un email</a>
+      <a href="https://wa.me/5491100000000" class="btn-ghost">WhatsApp directo →</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-inner">
+      <span class="footer-meta">© 2026 nicocasti · since 1992</span>
+      <ul class="footer-links">
+        <li><a href="#">Instagram</a></li>
+        <li><a href="#">Behance</a></li>
+        <li><a href="#">Email</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const header = document.getElementById('siteHeader');
+  window.addEventListener('scroll', () => {
+    header.classList.toggle('scrolled', window.scrollY > 40);
+  }, { passive: true });
+
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+</script>
+
+</body>
+</html>
