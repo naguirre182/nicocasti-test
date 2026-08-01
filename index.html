@@ -26,7 +26,7 @@
 
   *{ margin:0; padding:0; box-sizing:border-box; }
 
-  html{ scroll-behavior:smooth; }
+  html{ scroll-behavior:smooth; overflow-x:hidden; width:100%; }
 
   body{
     background:var(--bg);
@@ -35,6 +35,8 @@
     font-weight:400;
     line-height:1.6;
     overflow-x:hidden;
+    width:100%;
+    position:relative;
   }
 
   img{ display:block; max-width:100%; }
@@ -140,6 +142,64 @@
     transition:border-color .3s ease, background .3s ease;
   }
   .nav-cta:hover{ border-color:var(--neon); background:rgba(78,232,200,0.08); box-shadow:0 0 14px 1px rgba(78,232,200,0.35); }
+
+  /* ---------- hamburguesa + menú mobile ---------- */
+  .hamburger{
+    display:none;
+    flex-direction:column;
+    justify-content:center;
+    gap:5px;
+    width:32px;
+    height:32px;
+    background:none;
+    border:none;
+    cursor:pointer;
+    padding:0;
+    z-index:110;
+  }
+  .hamburger span{
+    display:block;
+    width:100%;
+    height:1px;
+    background:var(--text);
+    transition:transform .3s ease, opacity .3s ease;
+  }
+  .hamburger.open span:nth-child(1){ transform:translateY(6px) rotate(45deg); }
+  .hamburger.open span:nth-child(2){ opacity:0; }
+  .hamburger.open span:nth-child(3){ transform:translateY(-6px) rotate(-45deg); }
+
+  .mobile-menu{
+    position:fixed;
+    top:0; right:0;
+    height:100vh;
+    width:min(78vw, 320px);
+    background:var(--bg);
+    border-left:1px solid var(--border);
+    z-index:105;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    gap:32px;
+    padding:32px;
+    transform:translateX(100%);
+    transition:transform .4s ease;
+  }
+  .mobile-menu.open{ transform:translateX(0); }
+  .mobile-menu ul{
+    list-style:none;
+    display:flex;
+    flex-direction:column;
+    gap:24px;
+  }
+  .mobile-menu a{
+    font-family:var(--font-display);
+    font-size:24px;
+    color:var(--text);
+  }
+  .mobile-menu-cta{
+    align-self:flex-start;
+    display:inline-block;
+  }
 
   /* ---------- hero ---------- */
   .hero{
@@ -263,7 +323,7 @@
   }
 
   /* ---------- section shared ---------- */
-  section{ padding:120px 0; position:relative; }
+  section{ padding:120px 0; position:relative; overflow-x:hidden; }
 
   .section-divider{
     position:relative;
@@ -474,6 +534,8 @@
   /* ---------- responsive ---------- */
   @media (max-width:860px){
     .nav-links{ display:none; }
+    .hamburger{ display:flex; }
+    nav > .nav-cta{ display:none; }
     section{ padding:80px 0; }
     .section-head{ margin-bottom:40px; }
     .gallery{ grid-template-columns:1fr 1fr; gap:14px; }
@@ -516,7 +578,7 @@
 <header id="siteHeader">
   <div class="wrap">
     <nav>
-      <a href="#" class="logo">nicocasti_</a>
+      <a href="#" class="logo">nicocasti</a>
       <ul class="nav-links">
         <li><a href="#galeria">Galerías</a></li>
         <li><a href="#sobre-mi">Sobre mí</a></li>
@@ -524,7 +586,19 @@
         <li><a href="#contacto">Contacto</a></li>
       </ul>
       <a href="#contacto" class="nav-cta">Reservar sesión</a>
+      <button class="hamburger" id="hamburgerBtn" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobileMenu">
+        <span></span><span></span><span></span>
+      </button>
     </nav>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <ul>
+      <li><a href="#galeria">Galerías</a></li>
+      <li><a href="#sobre-mi">Sobre mí</a></li>
+      <li><a href="#blog">Blog</a></li>
+      <li><a href="#contacto">Contacto</a></li>
+    </ul>
+    <a href="#contacto" class="nav-cta mobile-menu-cta">Reservar sesión</a>
   </div>
 </header>
 
@@ -590,7 +664,7 @@
   <div class="wrap">
     <div class="about">
       <div class="about-img reveal slide-left" style="transition-delay:0s;">
-        <img src="./images/nicocasti.jpeg" alt="Retrato del fotógrafo">
+        <img src="https://picsum.photos/id/1062/600/750" alt="Retrato del fotógrafo">
       </div>
       <div class="about-text reveal slide-right" style="transition-delay:.18s;">
         <p class="section-eyebrow">Sobre mí</p>
@@ -678,6 +752,24 @@
   window.addEventListener('scroll', () => {
     header.classList.toggle('scrolled', window.scrollY > 40);
   }, { passive: true });
+
+  const hamburger = document.getElementById('hamburgerBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  function closeMobileMenu(){
+    hamburger.classList.remove('open');
+    mobileMenu.classList.remove('open');
+    hamburger.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+  }
+  hamburger.addEventListener('click', () => {
+    const isOpen = mobileMenu.classList.toggle('open');
+    hamburger.classList.toggle('open', isOpen);
+    hamburger.setAttribute('aria-expanded', String(isOpen));
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+  });
+  mobileMenu.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', closeMobileMenu);
+  });
 
   const revealObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
