@@ -18,6 +18,8 @@
     --amber: #E8A464;
     --blue: #4E7AA8;
     --neon: #4EE8C8;
+    --navy: #031f48;
+    --navy-neon: #2E7DFF;
     --border: rgba(242,238,232,0.10);
     --font-display: 'Fraunces', serif;
     --font-body: 'Work Sans', sans-serif;
@@ -173,33 +175,86 @@
     top:0; right:0;
     height:100vh;
     width:min(78vw, 320px);
-    background:var(--bg);
+    background:rgba(11,11,12,0.55);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
     border-left:1px solid var(--border);
     z-index:105;
     display:flex;
     flex-direction:column;
-    justify-content:center;
-    gap:32px;
-    padding:32px;
+    justify-content:flex-start;
+    padding:110px 32px 40px;
     transform:translateX(100%);
     transition:transform .4s ease;
   }
   .mobile-menu.open{ transform:translateX(0); }
+
+  .mobile-menu-brand{ margin-bottom:52px; }
+  .mobile-menu-name{
+    display:block;
+    font-family:var(--font-display);
+    font-size:26px;
+    font-weight:500;
+    color:#EAF2FF;
+    text-shadow:0 0 8px var(--navy-neon), 0 0 22px var(--navy-neon), 0 0 44px var(--navy);
+    animation:pulseNavyGlow 2.6s ease-in-out infinite;
+  }
+  .mobile-menu-role{
+    display:block;
+    font-family:var(--font-mono);
+    font-size:11px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color:var(--text-soft);
+    margin-top:6px;
+  }
+  @keyframes pulseNavyGlow{
+    0%, 100%{ text-shadow:0 0 8px var(--navy-neon), 0 0 22px var(--navy-neon), 0 0 44px var(--navy); }
+    50%{ text-shadow:0 0 12px var(--navy-neon), 0 0 30px var(--navy-neon), 0 0 56px var(--navy); }
+  }
+
   .mobile-menu ul{
     list-style:none;
     display:flex;
     flex-direction:column;
     gap:24px;
+    margin-bottom:auto;
   }
+  .mobile-menu li{
+    opacity:0;
+    transform:translateY(14px);
+    transition:opacity .4s ease, transform .4s ease;
+  }
+  .mobile-menu.open li{ opacity:1; transform:translateY(0); }
+  .mobile-menu.open li:nth-child(1){ transition-delay:.08s; }
+  .mobile-menu.open li:nth-child(2){ transition-delay:.14s; }
+  .mobile-menu.open li:nth-child(3){ transition-delay:.2s; }
+  .mobile-menu.open li:nth-child(4){ transition-delay:.26s; }
   .mobile-menu a{
+    position:relative;
     font-family:var(--font-display);
     font-size:24px;
     color:var(--text);
+    transition:color .3s ease;
   }
+  .mobile-menu ul a::after{
+    content:'';
+    position:absolute;
+    left:0; bottom:-4px;
+    width:0; height:1px;
+    background:var(--amber);
+    transition:width .3s ease;
+  }
+  .mobile-menu a:hover, .mobile-menu a:focus-visible{ color:var(--amber); }
+  .mobile-menu ul a:hover::after, .mobile-menu ul a:focus-visible::after{ width:100%; }
   .mobile-menu-cta{
     align-self:flex-start;
     display:inline-block;
+    opacity:0;
+    transform:translateY(14px);
+    transition:opacity .4s ease .32s, transform .4s ease .32s, border-color .3s ease, background .3s ease, box-shadow .3s ease;
   }
+  .mobile-menu.open .mobile-menu-cta{ opacity:1; transform:translateY(0); }
 
   /* ---------- hero ---------- */
   .hero{
@@ -592,6 +647,10 @@
     </nav>
   </div>
   <div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-brand">
+      <span class="mobile-menu-name">nicocasti_</span>
+      <span class="mobile-menu-role">fotógrafo</span>
+    </div>
     <ul>
       <li><a href="#galeria">Galerías</a></li>
       <li><a href="#sobre-mi">Sobre mí</a></li>
