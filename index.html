@@ -649,7 +649,7 @@
     <nav>
       <a href="#" class="logo">nicocasti_</a>
       <ul class="nav-links">
-        <li><a href="#galeria">Galerías</a></li>
+        <li><a href="galerias.html">Galerías</a></li>
         <li><a href="#sobre-mi">Sobre mí</a></li>
         <li><a href="#blog">Blog</a></li>
         <li><a href="#contacto">Contacto</a></li>
@@ -666,7 +666,7 @@
       <span class="mobile-menu-role">fotógrafo</span>
     </div>
     <ul>
-      <li><a href="#galeria">Galerías</a></li>
+      <li><a href="galerias.html">Galerías</a></li>
       <li><a href="#sobre-mi">Sobre mí</a></li>
       <li><a href="#blog">Blog</a></li>
       <li><a href="#contacto">Contacto</a></li>
@@ -687,7 +687,7 @@
       <h1>Retratos que sostienen<br><em>una mirada.</em></h1>
       <p>Sesiones de retrato con dirección de luz cinematográfica. Cada sesión busca un momento real, no una pose.</p>
       <div class="hero-actions">
-        <a href="#galeria" class="btn-primary">Ver portfolio</a>
+        <a href="galerias.html" class="btn-primary">Ver portfolio</a>
         <a href="#contacto" class="btn-ghost">Reservar sesión →</a>
       </div>
     </div>
@@ -828,17 +828,34 @@
 
   const hamburger = document.getElementById('hamburgerBtn');
   const mobileMenu = document.getElementById('mobileMenu');
+  let scrollLockY = 0;
+
+  function lockScroll(){
+    scrollLockY = window.scrollY;
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollLockY}px`;
+    document.body.style.width = '100%';
+    document.body.style.overflow = 'hidden';
+  }
+  function unlockScroll(){
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.width = '';
+    document.body.style.overflow = '';
+    window.scrollTo(0, scrollLockY);
+  }
+
   function closeMobileMenu(){
     hamburger.classList.remove('open');
     mobileMenu.classList.remove('open');
     hamburger.setAttribute('aria-expanded', 'false');
-    document.body.style.overflow = '';
+    unlockScroll();
   }
   hamburger.addEventListener('click', () => {
     const isOpen = mobileMenu.classList.toggle('open');
     hamburger.classList.toggle('open', isOpen);
     hamburger.setAttribute('aria-expanded', String(isOpen));
-    document.body.style.overflow = isOpen ? 'hidden' : '';
+    if (isOpen) { lockScroll(); } else { unlockScroll(); }
   });
   mobileMenu.querySelectorAll('a').forEach(link => {
     link.addEventListener('click', closeMobileMenu);
