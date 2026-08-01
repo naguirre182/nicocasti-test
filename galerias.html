@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Galerías — nicocasti_</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,400&family=Work+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+
+  :root{
+    --bg: #0B0B0C;
+    --surface: #17161A;
+    --surface-2: #201F24;
+    --text: #F2EEE8;
+    --text-soft: #A39C92;
+    --amber: #E8A464;
+    --blue: #4E7AA8;
+    --neon: #4EE8C8;
+    --navy: #031f48;
+    --navy-neon: #2E7DFF;
+    --border: rgba(242,238,232,0.10);
+    --font-display: 'Fraunces', serif;
+    --font-body: 'Work Sans', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  html{ scroll-behavior:smooth; overflow-x:hidden; width:100%; }
+
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--font-body);
+    font-weight:400;
+    line-height:1.6;
+    overflow-x:hidden;
+    width:100%;
+    position:relative;
+  }
+
+  img{ display:block; max-width:100%; }
+  a{ color:inherit; text-decoration:none; }
+  button{ font-family:inherit; cursor:pointer; }
+
+  .wrap{ max-width:1180px; margin:0 auto; padding:0 32px; }
+
+  @keyframes fadeUp{
+    from{ opacity:0; transform:translateY(26px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+  @keyframes pulseGlow{
+    0%, 100%{ box-shadow:0 0 8px 2px rgba(232,164,100,0.6); }
+    50%{ box-shadow:0 0 16px 5px rgba(232,164,100,0.85); }
+  }
+  @keyframes pulseNavyGlow{
+    0%, 100%{ text-shadow:0 0 6px var(--navy-neon), 0 0 16px var(--navy-neon), 0 0 32px var(--navy); }
+    50%{ text-shadow:0 0 10px var(--navy-neon), 0 0 24px var(--navy-neon), 0 0 44px var(--navy); }
+  }
+
+  .reveal{
+    opacity:0;
+    transform:translateY(28px);
+    transition:opacity .7s ease, transform .7s ease;
+  }
+  .reveal.visible{ opacity:1; transform:translateY(0); }
+
+  /* ---------- nav (igual al Home) ---------- */
+  header{
+    position:fixed;
+    top:0; left:0; right:0;
+    z-index:100;
+    padding:24px 0;
+    transition:background .4s ease, padding .4s ease, border-color .4s ease;
+    border-bottom:1px solid transparent;
+  }
+  header.scrolled{
+    background:rgba(11,11,12,0.85);
+    backdrop-filter:blur(10px);
+    padding:16px 0;
+    border-bottom:1px solid var(--border);
+  }
+  nav{ display:flex; align-items:center; justify-content:space-between; }
+  .logo{
+    font-family:var(--font-display);
+    font-size:20px;
+    font-weight:500;
+    letter-spacing:0.5px;
+    color:#EAF2FF;
+    text-shadow:0 0 6px var(--navy-neon), 0 0 16px var(--navy-neon), 0 0 32px var(--navy);
+    animation:pulseNavyGlow 2.6s ease-in-out infinite;
+  }
+  .nav-links{ display:flex; gap:40px; list-style:none; font-size:14px; letter-spacing:0.3px; }
+  .nav-links a{ position:relative; color:var(--text-soft); transition:color .3s ease; }
+  .nav-links a.active{ color:var(--text); }
+  .nav-links a:hover{ color:var(--text); }
+  .nav-links a::after{
+    content:''; position:absolute; left:0; bottom:-6px; width:0; height:1px;
+    background:var(--amber); transition:width .3s ease;
+  }
+  .nav-links a:hover::after, .nav-links a.active::after{ width:100%; }
+  .nav-cta{
+    font-size:13px; font-family:var(--font-mono); border:1px solid var(--border);
+    padding:9px 18px; border-radius:2px; transition:border-color .3s ease, background .3s ease;
+  }
+  .nav-cta:hover{ border-color:var(--neon); background:rgba(78,232,200,0.08); box-shadow:0 0 14px 1px rgba(78,232,200,0.35); }
+
+  .hamburger{
+    display:none; flex-direction:column; justify-content:center; gap:5px;
+    width:32px; height:32px; background:none; border:none; padding:0; z-index:110;
+  }
+  .hamburger span{ display:block; width:100%; height:1px; background:var(--text); transition:transform .3s ease, opacity .3s ease; }
+  .hamburger.open span:nth-child(1){ transform:translateY(6px) rotate(45deg); }
+  .hamburger.open span:nth-child(2){ opacity:0; }
+  .hamburger.open span:nth-child(3){ transform:translateY(-6px) rotate(-45deg); }
+
+  .mobile-menu{
+    position:fixed; top:0; right:-100%; height:100vh; width:min(78vw, 320px);
+    background:rgba(9,9,10,0.85);
+    backdrop-filter:blur(20px) saturate(1.2);
+    -webkit-backdrop-filter:blur(20px) saturate(1.2);
+    border-left:1px solid var(--border);
+    z-index:105;
+    display:flex; flex-direction:column; justify-content:flex-start;
+    padding:110px 32px 40px;
+    transition:right .4s ease;
+  }
+  .mobile-menu.open{ right:0; }
+  .mobile-menu-brand{ margin-bottom:52px; }
+  .mobile-menu-name{
+    display:block; font-family:var(--font-display); font-size:26px; font-weight:500;
+    color:#EAF2FF; text-shadow:0 0 8px var(--navy-neon), 0 0 22px var(--navy-neon), 0 0 44px var(--navy);
+    animation:pulseNavyGlow 2.6s ease-in-out infinite;
+  }
+  .mobile-menu-role{
+    display:block; font-family:var(--font-mono); font-size:11px; letter-spacing:2px;
+    text-transform:uppercase; color:var(--text-soft); margin-top:6px;
+  }
+  .mobile-menu ul{ list-style:none; display:flex; flex-direction:column; gap:24px; margin-bottom:auto; }
+  .mobile-menu li{ opacity:0; transform:translateY(14px); transition:opacity .4s ease, transform .4s ease; }
+  .mobile-menu.open li{ opacity:1; transform:translateY(0); }
+  .mobile-menu.open li:nth-child(1){ transition-delay:.08s; }
+  .mobile-menu.open li:nth-child(2){ transition-delay:.14s; }
+  .mobile-menu.open li:nth-child(3){ transition-delay:.2s; }
+  .mobile-menu.open li:nth-child(4){ transition-delay:.26s; }
+  .mobile-menu a{ position:relative; font-family:var(--font-display); font-size:24px; color:var(--text); transition:color .3s ease; }
+  .mobile-menu a.active{ color:var(--amber); }
+  .mobile-menu ul a::after{
+    content:''; position:absolute; left:0; bottom:-4px; width:0; height:1px;
+    background:var(--amber); transition:width .3s ease;
+  }
+  .mobile-menu a:hover, .mobile-menu a:focus-visible{ color:var(--amber); }
+  .mobile-menu ul a:hover::after, .mobile-menu ul a:focus-visible::after, .mobile-menu ul a.active::after{ width:100%; }
+  .mobile-menu-cta{
+    align-self:flex-start; display:inline-block; background:var(--amber); color:var(--bg);
+    border:none; font-family:var(--font-mono); font-size:14px; font-weight:500;
+    padding:15px 28px; border-radius:2px; box-shadow:0 0 20px 2px rgba(232,164,100,0.25);
+    opacity:0; transform:translateY(14px);
+    transition:opacity .4s ease .32s, transform .4s ease .32s, box-shadow .3s ease, background .3s ease;
+  }
+  .mobile-menu-cta:hover{ background:#F0B378; box-shadow:0 0 26px 4px rgba(232,164,100,0.4); }
+  .mobile-menu.open .mobile-menu-cta{ opacity:1; transform:translateY(0); }
+
+  /* ---------- page intro ---------- */
+  .page-hero{
+    padding:200px 0 64px;
+    position:relative;
+  }
+  .page-hero .bokeh{
+    position:absolute; border-radius:50%; filter:blur(28px); opacity:0.3; pointer-events:none;
+    animation:floatBokeh 9s ease-in-out infinite;
+  }
+  @keyframes floatBokeh{
+    0%, 100%{ transform:translate(0,0) scale(1); }
+    50%{ transform:translate(-16px, 18px) scale(1.08); }
+  }
+  .page-eyebrow{
+    font-family:var(--font-mono); font-size:12px; color:var(--amber);
+    letter-spacing:1.5px; text-transform:uppercase; margin-bottom:18px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .page-eyebrow::before{
+    content:''; width:6px; height:6px; border-radius:50%; background:var(--amber);
+    animation:pulseGlow 2.4s ease-in-out infinite;
+  }
+  .page-hero h1{
+    font-family:var(--font-display); font-weight:500; font-size:clamp(38px, 6vw, 60px);
+    line-height:1.05; letter-spacing:-0.5px; margin-bottom:18px; max-width:640px;
+  }
+  .page-hero p{ color:var(--text-soft); max-width:460px; font-size:15px; }
+
+  /* ---------- filtros ---------- */
+  .filters{
+    display:flex; flex-wrap:wrap; gap:10px;
+    padding:8px 0 56px;
+  }
+  .filter-btn{
+    font-family:var(--font-mono); font-size:12px; letter-spacing:0.5px;
+    background:none; border:1px solid var(--border); color:var(--text-soft);
+    padding:9px 18px; border-radius:999px; transition:all .3s ease;
+  }
+  .filter-btn:hover{ border-color:var(--text-soft); color:var(--text); }
+  .filter-btn.active{
+    background:var(--amber); border-color:var(--amber); color:var(--bg); font-weight:500;
+  }
+
+  /* ---------- grilla ---------- */
+  .gallery-grid{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    grid-auto-rows:10px;
+    gap:18px;
+    padding-bottom:100px;
+  }
+  .g-item{
+    position:relative;
+    overflow:hidden;
+    border-radius:3px;
+    background:var(--surface);
+    cursor:pointer;
+    transition:box-shadow .5s ease, opacity .4s ease, transform .5s ease;
+  }
+  .g-item.filtered-out{
+    opacity:0; transform:scale(0.9); pointer-events:none; position:absolute; visibility:hidden;
+  }
+  .g-item img{
+    width:100%; height:100%; object-fit:cover;
+    filter:brightness(0.82) saturate(1.05);
+    transition:transform .6s ease, filter .6s ease;
+  }
+  .g-item:hover{ box-shadow:0 0 0 1px rgba(78,232,200,0.4), 0 0 24px 2px rgba(78,232,200,0.15); }
+  .g-item:hover img{ transform:scale(1.06); filter:brightness(0.95) saturate(1.1); }
+  .g-caption{
+    position:absolute; left:0; right:0; bottom:0; padding:16px;
+    background:linear-gradient(0deg, rgba(0,0,0,0.75), transparent);
+    opacity:0; transform:translateY(8px);
+    transition:opacity .4s ease, transform .4s ease;
+  }
+  .g-item:hover .g-caption{ opacity:1; transform:translateY(0); }
+  .g-caption span{ font-family:var(--font-mono); font-size:11px; color:var(--amber); text-transform:uppercase; letter-spacing:1px; }
+
+  /* variedad de tamaños para efecto masonry */
+  .g-item.tall{ grid-row:span 34; }
+  .g-item.mid{ grid-row:span 26; }
+  .g-item.short{ grid-row:span 20; }
+  .g-item.wide{ grid-column:span 2; grid-row:span 20; }
+
+  /* ---------- lightbox ---------- */
+  .lightbox{
+    position:fixed; inset:0; z-index:200;
+    background:rgba(6,6,7,0.94);
+    backdrop-filter:blur(6px);
+    display:flex; align-items:center; justify-content:center;
+    opacity:0; pointer-events:none;
+    transition:opacity .35s ease;
+  }
+  .lightbox.open{ opacity:1; pointer-events:auto; }
+  .lightbox-inner{
+    max-width:min(88vw, 720px);
+    max-height:86vh;
+    display:flex; flex-direction:column; gap:14px; align-items:center;
+  }
+  .lightbox-inner img{
+    max-width:100%; max-height:74vh; width:auto; border-radius:3px;
+    box-shadow:0 20px 60px rgba(0,0,0,0.5);
+  }
+  .lightbox-meta{
+    display:flex; justify-content:space-between; align-items:center; width:100%;
+    font-family:var(--font-mono); font-size:12px; color:var(--text-soft);
+  }
+  .lightbox-meta strong{ font-family:var(--font-display); font-size:16px; color:var(--text); font-weight:500; margin-right:8px; }
+  .lightbox-close{
+    position:absolute; top:28px; right:32px;
+    width:40px; height:40px; border-radius:50%;
+    border:1px solid var(--border); background:rgba(255,255,255,0.03);
+    color:var(--text); font-size:18px;
+    display:flex; align-items:center; justify-content:center;
+    transition:border-color .3s ease, background .3s ease;
+  }
+  .lightbox-close:hover{ border-color:var(--neon); background:rgba(78,232,200,0.08); }
+  .lightbox-nav{
+    position:absolute; top:50%; transform:translateY(-50%);
+    width:44px; height:44px; border-radius:50%;
+    border:1px solid var(--border); background:rgba(255,255,255,0.03);
+    color:var(--text); font-size:18px;
+    display:flex; align-items:center; justify-content:center;
+    transition:border-color .3s ease, background .3s ease;
+  }
+  .lightbox-nav:hover{ border-color:var(--amber); background:rgba(232,164,100,0.08); }
+  .lightbox-prev{ left:24px; }
+  .lightbox-next{ right:24px; }
+
+  /* ---------- cta final ---------- */
+  .cta{ text-align:center; padding:120px 0 140px; }
+  .cta .page-eyebrow{ justify-content:center; }
+  .cta h2{
+    font-family:var(--font-display); font-weight:500; font-size:clamp(28px, 4.5vw, 46px);
+    max-width:600px; margin:0 auto 32px; line-height:1.2;
+  }
+  .cta h2 em{ font-style:italic; color:var(--neon); font-weight:300; text-shadow:0 0 18px rgba(78,232,200,0.35); }
+  .btn-primary{
+    font-family:var(--font-mono); font-size:13px; background:var(--text); color:var(--bg);
+    padding:14px 26px; border-radius:2px; transition:background .3s ease, transform .3s ease;
+    display:inline-block;
+  }
+  .btn-primary:hover{ background:var(--amber); transform:translateY(-2px); box-shadow:0 0 20px 2px rgba(232,164,100,0.35); }
+
+  /* ---------- footer ---------- */
+  footer{ border-top:1px solid var(--border); padding:48px 0; }
+  .footer-inner{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px; }
+  .footer-links{ display:flex; gap:28px; list-style:none; font-size:13px; color:var(--text-soft); }
+  .footer-links a:hover{ color:var(--amber); }
+  .footer-meta{ font-family:var(--font-mono); font-size:12px; color:var(--text-soft); }
+
+  /* ---------- responsive ---------- */
+  @media (max-width:860px){
+    .nav-links{ display:none; }
+    .hamburger{ display:flex; }
+    nav > .nav-cta{ display:none; }
+    .page-hero{ padding:160px 0 40px; }
+    .gallery-grid{ grid-template-columns:repeat(2, 1fr); }
+    .g-item.wide{ grid-column:span 2; }
+  }
+  @media (max-width:560px){
+    .wrap{ padding:0 20px; }
+    .gallery-grid{ grid-template-columns:1fr; gap:14px; }
+    .g-item.tall, .g-item.mid, .g-item.short, .g-item.wide{ grid-column:span 1; grid-row:span 24; }
+    .lightbox-nav{ width:38px; height:38px; }
+    .lightbox-prev{ left:10px; }
+    .lightbox-next{ right:10px; }
+    .lightbox-close{ top:16px; right:16px; }
+    .filters{ gap:8px; }
+    .filter-btn{ padding:8px 14px; font-size:11px; }
+  }
+
+  a:focus-visible, button:focus-visible{ outline:1px solid var(--amber); outline-offset:3px; }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition:none !important; scroll-behavior:auto !important; }
+  }
+</style>
+</head>
+<body>
+
+<header id="siteHeader">
+  <div class="wrap">
+    <nav>
+      <a href="index.html" class="logo">nicocasti_</a>
+      <ul class="nav-links">
+        <li><a href="galerias.html" class="active">Galerías</a></li>
+        <li><a href="index.html#sobre-mi">Sobre mí</a></li>
+        <li><a href="index.html#blog">Blog</a></li>
+        <li><a href="index.html#contacto">Contacto</a></li>
+      </ul>
+      <a href="index.html#contacto" class="nav-cta">Reservar sesión</a>
+      <button class="hamburger" id="hamburgerBtn" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobileMenu">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-brand">
+      <span class="mobile-menu-name">nicocasti_</span>
+      <span class="mobile-menu-role">fotógrafo</span>
+    </div>
+    <ul>
+      <li><a href="galerias.html" class="active">Galerías</a></li>
+      <li><a href="index.html#sobre-mi">Sobre mí</a></li>
+      <li><a href="index.html#blog">Blog</a></li>
+      <li><a href="index.html#contacto">Contacto</a></li>
+    </ul>
+    <a href="index.html#contacto" class="nav-cta mobile-menu-cta">Reservar sesión</a>
+  </div>
+</header>
+
+<section class="page-hero">
+  <div class="bokeh" style="width:160px;height:160px;background:var(--amber);top:10%;right:10%;animation-duration:10s;"></div>
+  <div class="bokeh" style="width:80px;height:80px;background:var(--neon);top:30%;right:22%;opacity:0.25;animation-duration:8s;"></div>
+  <div class="wrap">
+    <p class="page-eyebrow reveal">Portfolio completo</p>
+    <h1 class="reveal" style="transition-delay:.1s;">Galerías</h1>
+    <p class="reveal" style="transition-delay:.2s;">Cada sesión, organizada por tipo de trabajo. Filtrá por categoría o recorré todo el archivo.</p>
+  </div>
+</section>
+
+<div class="wrap">
+  <div class="filters reveal" style="transition-delay:.3s;">
+    <button class="filter-btn active" data-filter="all">Todas</button>
+    <button class="filter-btn" data-filter="editorial">Editorial</button>
+    <button class="filter-btn" data-filter="estudio">Estudio</button>
+    <button class="filter-btn" data-filter="urbano">Urbano</button>
+    <button class="filter-btn" data-filter="moda">Moda</button>
+    <button class="filter-btn" data-filter="exterior">Exterior</button>
+  </div>
+
+  <div class="gallery-grid" id="galleryGrid">
+    <div class="g-item tall reveal" data-category="editorial" data-name="Vera" data-tag="Retrato · Editorial">
+      <img src="https://picsum.photos/id/1005/700/1000" alt="Vera — Retrato Editorial">
+      <div class="g-caption"><span>Vera · Editorial</span></div>
+    </div>
+    <div class="g-item mid reveal" data-category="estudio" data-name="Nico" data-tag="Retrato · Estudio">
+      <img src="https://picsum.photos/id/1011/600/700" alt="Nico — Retrato de Estudio">
+      <div class="g-caption"><span>Nico · Estudio</span></div>
+    </div>
+    <div class="g-item short reveal" data-category="urbano" data-name="Sole" data-tag="Retrato · Urbano">
+      <img src="https://picsum.photos/id/1012/600/500" alt="Sole — Retrato Urbano">
+      <div class="g-caption"><span>Sole · Urbano</span></div>
+    </div>
+    <div class="g-item mid reveal" data-category="moda" data-name="Fer" data-tag="Retrato · Moda">
+      <img src="https://picsum.photos/id/1027/600/700" alt="Fer — Retrato de Moda">
+      <div class="g-caption"><span>Fer · Moda</span></div>
+    </div>
+    <div class="g-item wide reveal" data-category="exterior" data-name="Julia" data-tag="Retrato · Exterior">
+      <img src="https://picsum.photos/id/1025/1000/560" alt="Julia — Retrato en Exterior">
+      <div class="g-caption"><span>Julia · Exterior</span></div>
+    </div>
+    <div class="g-item short reveal" data-category="estudio" data-name="Bruno" data-tag="Retrato · Estudio">
+      <img src="https://picsum.photos/id/1074/600/500" alt="Bruno — Retrato de Estudio">
+      <div class="g-caption"><span>Bruno · Estudio</span></div>
+    </div>
+    <div class="g-item tall reveal" data-category="editorial" data-name="Mora" data-tag="Retrato · Editorial">
+      <img src="https://picsum.photos/id/1080/700/1000" alt="Mora — Retrato Editorial">
+      <div class="g-caption"><span>Mora · Editorial</span></div>
+    </div>
+    <div class="g-item mid reveal" data-category="urbano" data-name="Ian" data-tag="Retrato · Urbano">
+      <img src="https://picsum.photos/id/1084/600/700" alt="Ian — Retrato Urbano">
+      <div class="g-caption"><span>Ian · Urbano</span></div>
+    </div>
+    <div class="g-item short reveal" data-category="moda" data-name="Cata" data-tag="Retrato · Moda">
+      <img src="https://picsum.photos/id/1062/600/500" alt="Cata — Retrato de Moda">
+      <div class="g-caption"><span>Cata · Moda</span></div>
+    </div>
+    <div class="g-item wide reveal" data-category="editorial" data-name="Dante" data-tag="Retrato · Editorial">
+      <img src="https://picsum.photos/id/103/1000/560" alt="Dante — Retrato Editorial">
+      <div class="g-caption"><span>Dante · Editorial</span></div>
+    </div>
+    <div class="g-item mid reveal" data-category="exterior" data-name="Lola" data-tag="Retrato · Exterior">
+      <img src="https://picsum.photos/id/104/600/700" alt="Lola — Retrato en Exterior">
+      <div class="g-caption"><span>Lola · Exterior</span></div>
+    </div>
+    <div class="g-item short reveal" data-category="estudio" data-name="Max" data-tag="Retrato · Estudio">
+      <img src="https://picsum.photos/id/106/600/500" alt="Max — Retrato de Estudio">
+      <div class="g-caption"><span>Max · Estudio</span></div>
+    </div>
+  </div>
+</div>
+
+<section class="cta">
+  <div class="wrap">
+    <p class="page-eyebrow reveal">¿Te gustó lo que viste?</p>
+    <h2 class="reveal" style="transition-delay:.1s;">Coordinemos <em>tu sesión.</em></h2>
+    <a href="index.html#contacto" class="btn-primary reveal" style="transition-delay:.2s;">Reservar sesión</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-inner">
+      <span class="footer-meta">© 2026 nicocasti_ · since 1992</span>
+      <ul class="footer-links">
+        <li><a href="#">Instagram</a></li>
+        <li><a href="#">Behance</a></li>
+        <li><a href="#">Email</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lightboxClose" aria-label="Cerrar">✕</button>
+  <button class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="Anterior">‹</button>
+  <button class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Siguiente">›</button>
+  <div class="lightbox-inner">
+    <img id="lightboxImg" src="" alt="">
+    <div class="lightbox-meta">
+      <span><strong id="lightboxName"></strong><span id="lightboxTag"></span></span>
+      <span id="lightboxCount"></span>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Header al scrollear
+  const header = document.getElementById('siteHeader');
+  window.addEventListener('scroll', () => {
+    header.classList.toggle('scrolled', window.scrollY > 40);
+  }, { passive: true });
+
+  // Menú hamburguesa
+  const hamburger = document.getElementById('hamburgerBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  let scrollLockY = 0;
+
+  function lockScroll(){
+    scrollLockY = window.scrollY;
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollLockY}px`;
+    document.body.style.width = '100%';
+    document.body.style.overflow = 'hidden';
+  }
+  function unlockScroll(){
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.width = '';
+    document.body.style.overflow = '';
+    window.scrollTo(0, scrollLockY);
+  }
+
+  hamburger.addEventListener('click', () => {
+    const isOpen = mobileMenu.classList.toggle('open');
+    hamburger.classList.toggle('open', isOpen);
+    hamburger.setAttribute('aria-expanded', String(isOpen));
+    if (isOpen) { lockScroll(); } else { unlockScroll(); }
+  });
+  mobileMenu.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      hamburger.classList.remove('open');
+      mobileMenu.classList.remove('open');
+      hamburger.setAttribute('aria-expanded', 'false');
+      unlockScroll();
+    });
+  });
+
+  // Reveal al hacer scroll
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+  // Filtros por categoría
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const items = document.querySelectorAll('.g-item');
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const filter = btn.dataset.filter;
+      items.forEach(item => {
+        const match = filter === 'all' || item.dataset.category === filter;
+        item.classList.toggle('filtered-out', !match);
+      });
+    });
+  });
+
+  // Lightbox
+  const visibleItems = () => Array.from(items).filter(i => !i.classList.contains('filtered-out'));
+  let currentIndex = 0;
+
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightboxImg');
+  const lightboxName = document.getElementById('lightboxName');
+  const lightboxTag = document.getElementById('lightboxTag');
+  const lightboxCount = document.getElementById('lightboxCount');
+
+  function openLightbox(index){
+    const list = visibleItems();
+    if (!list.length) return;
+    currentIndex = index;
+    const item = list[currentIndex];
+    const img = item.querySelector('img');
+    lightboxImg.src = img.src.replace(/\/\d+\/\d+$/, '/1400/1800');
+    lightboxImg.alt = img.alt;
+    lightboxName.textContent = item.dataset.name;
+    lightboxTag.textContent = ' ' + item.dataset.tag;
+    lightboxCount.textContent = (currentIndex + 1) + ' / ' + list.length;
+    lightbox.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeLightbox(){
+    lightbox.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  function showNext(delta){
+    const list = visibleItems();
+    if (!list.length) return;
+    currentIndex = (currentIndex + delta + list.length) % list.length;
+    openLightbox(currentIndex);
+  }
+
+  items.forEach((item, i) => {
+    item.addEventListener('click', () => {
+      const list = visibleItems();
+      const idx = list.indexOf(item);
+      openLightbox(idx);
+    });
+  });
+
+  document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
+  document.getElementById('lightboxNext').addEventListener('click', () => showNext(1));
+  document.getElementById('lightboxPrev').addEventListener('click', () => showNext(-1));
+  lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
+  document.addEventListener('keydown', (e) => {
+    if (!lightbox.classList.contains('open')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowRight') showNext(1);
+    if (e.key === 'ArrowLeft') showNext(-1);
+  });
+</script>
+
+</body>
+</html>
