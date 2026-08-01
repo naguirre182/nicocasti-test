@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sobre mí — nicocasti_</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,400&family=Work+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+
+  :root{
+    --bg: #0B0B0C;
+    --surface: #17161A;
+    --surface-2: #201F24;
+    --text: #F2EEE8;
+    --text-soft: #A39C92;
+    --amber: #E8A464;
+    --blue: #4E7AA8;
+    --neon: #4EE8C8;
+    --navy: #031f48;
+    --navy-neon: #2E7DFF;
+    --border: rgba(242,238,232,0.10);
+    --font-display: 'Fraunces', serif;
+    --font-body: 'Work Sans', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html{ scroll-behavior:smooth; overflow-x:hidden; width:100%; }
+  body{
+    background:var(--bg); color:var(--text); font-family:var(--font-body);
+    font-weight:400; line-height:1.6; overflow-x:hidden; width:100%; position:relative;
+  }
+  img{ display:block; max-width:100%; }
+  a{ color:inherit; text-decoration:none; }
+  button{ font-family:inherit; cursor:pointer; }
+  .wrap{ max-width:1180px; margin:0 auto; padding:0 32px; }
+
+  @keyframes fadeUp{ from{ opacity:0; transform:translateY(26px); } to{ opacity:1; transform:translateY(0); } }
+  @keyframes pulseGlow{ 0%,100%{ box-shadow:0 0 8px 2px rgba(232,164,100,0.6); } 50%{ box-shadow:0 0 16px 5px rgba(232,164,100,0.85); } }
+  @keyframes pulseNavyGlow{
+    0%,100%{ text-shadow:0 0 6px var(--navy-neon), 0 0 16px var(--navy-neon), 0 0 32px var(--navy); }
+    50%{ text-shadow:0 0 10px var(--navy-neon), 0 0 24px var(--navy-neon), 0 0 44px var(--navy); }
+  }
+  @keyframes floatBokeh{ 0%,100%{ transform:translate(0,0) scale(1); } 50%{ transform:translate(-16px,18px) scale(1.08); } }
+
+  .reveal{ opacity:0; transform:translateY(28px); transition:opacity .7s ease, transform .7s ease; }
+  .reveal.visible{ opacity:1; transform:translateY(0); }
+  .reveal.slide-left{ transform:translateX(-48px); }
+  .reveal.slide-left.visible{ transform:none; }
+  .reveal.slide-right{ transform:translateX(48px); }
+  .reveal.slide-right.visible{ transform:none; }
+
+  .bokeh{ position:absolute; border-radius:50%; filter:blur(28px); opacity:0.3; pointer-events:none; animation:floatBokeh 9s ease-in-out infinite; }
+
+  /* ---------- nav ---------- */
+  header{
+    position:fixed; top:0; left:0; right:0; z-index:100; padding:24px 0;
+    transition:background .4s ease, padding .4s ease, border-color .4s ease;
+    border-bottom:1px solid transparent;
+  }
+  header.scrolled{ background:rgba(11,11,12,0.85); backdrop-filter:blur(10px); padding:16px 0; border-bottom:1px solid var(--border); }
+  nav{ display:flex; align-items:center; justify-content:space-between; }
+  .logo{
+    font-family:var(--font-display); font-size:20px; font-weight:500; letter-spacing:0.5px;
+    color:#EAF2FF; text-shadow:0 0 6px var(--navy-neon), 0 0 16px var(--navy-neon), 0 0 32px var(--navy);
+    animation:pulseNavyGlow 2.6s ease-in-out infinite;
+  }
+  .nav-links{ display:flex; gap:40px; list-style:none; font-size:14px; letter-spacing:0.3px; }
+  .nav-links a{ position:relative; color:var(--text-soft); transition:color .3s ease; }
+  .nav-links a.active{ color:var(--text); }
+  .nav-links a:hover{ color:var(--text); }
+  .nav-links a::after{ content:''; position:absolute; left:0; bottom:-6px; width:0; height:1px; background:var(--amber); transition:width .3s ease; }
+  .nav-links a:hover::after, .nav-links a.active::after{ width:100%; }
+  .nav-cta{
+    font-size:13px; font-family:var(--font-mono); border:1px solid var(--border);
+    padding:9px 18px; border-radius:2px; transition:border-color .3s ease, background .3s ease;
+  }
+  .nav-cta:hover{ border-color:var(--neon); background:rgba(78,232,200,0.08); box-shadow:0 0 14px 1px rgba(78,232,200,0.35); }
+
+  .hamburger{ display:none; flex-direction:column; justify-content:center; gap:5px; width:32px; height:32px; background:none; border:none; padding:0; z-index:110; }
+  .hamburger span{ display:block; width:100%; height:1px; background:var(--text); transition:transform .3s ease, opacity .3s ease; }
+  .hamburger.open span:nth-child(1){ transform:translateY(6px) rotate(45deg); }
+  .hamburger.open span:nth-child(2){ opacity:0; }
+  .hamburger.open span:nth-child(3){ transform:translateY(-6px) rotate(-45deg); }
+
+  .mobile-menu{
+    position:fixed; top:0; right:-100%; height:100vh; width:min(78vw, 320px);
+    background:rgba(9,9,10,0.85); backdrop-filter:blur(20px) saturate(1.2); -webkit-backdrop-filter:blur(20px) saturate(1.2);
+    border-left:1px solid var(--border); z-index:105;
+    display:flex; flex-direction:column; justify-content:flex-start; padding:110px 32px 40px;
+    transition:right .4s ease;
+  }
+  .mobile-menu.open{ right:0; }
+  .mobile-menu-brand{ margin-bottom:52px; }
+  .mobile-menu-name{
+    display:block; font-family:var(--font-display); font-size:26px; font-weight:500;
+    color:#EAF2FF; text-shadow:0 0 8px var(--navy-neon), 0 0 22px var(--navy-neon), 0 0 44px var(--navy);
+    animation:pulseNavyGlow 2.6s ease-in-out infinite;
+  }
+  .mobile-menu-role{ display:block; font-family:var(--font-mono); font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--text-soft); margin-top:6px; }
+  .mobile-menu ul{ list-style:none; display:flex; flex-direction:column; gap:24px; margin-bottom:auto; }
+  .mobile-menu li{ opacity:0; transform:translateY(14px); transition:opacity .4s ease, transform .4s ease; }
+  .mobile-menu.open li{ opacity:1; transform:translateY(0); }
+  .mobile-menu.open li:nth-child(1){ transition-delay:.08s; }
+  .mobile-menu.open li:nth-child(2){ transition-delay:.14s; }
+  .mobile-menu.open li:nth-child(3){ transition-delay:.2s; }
+  .mobile-menu.open li:nth-child(4){ transition-delay:.26s; }
+  .mobile-menu a{ position:relative; font-family:var(--font-display); font-size:24px; color:var(--text); transition:color .3s ease; }
+  .mobile-menu a.active{ color:var(--amber); }
+  .mobile-menu ul a::after{ content:''; position:absolute; left:0; bottom:-4px; width:0; height:1px; background:var(--amber); transition:width .3s ease; }
+  .mobile-menu a:hover, .mobile-menu a:focus-visible{ color:var(--amber); }
+  .mobile-menu ul a:hover::after, .mobile-menu ul a:focus-visible::after, .mobile-menu ul a.active::after{ width:100%; }
+  .mobile-menu-cta{
+    align-self:flex-start; display:inline-block; background:var(--amber); color:var(--bg); border:none;
+    font-family:var(--font-mono); font-size:14px; font-weight:500; padding:15px 28px; border-radius:2px;
+    box-shadow:0 0 20px 2px rgba(232,164,100,0.25); opacity:0; transform:translateY(14px);
+    transition:opacity .4s ease .32s, transform .4s ease .32s, box-shadow .3s ease, background .3s ease;
+  }
+  .mobile-menu-cta:hover{ background:#F0B378; box-shadow:0 0 26px 4px rgba(232,164,100,0.4); }
+  .mobile-menu.open .mobile-menu-cta{ opacity:1; transform:translateY(0); }
+
+  /* ---------- intro / hero de la página ---------- */
+  .page-hero{ padding:180px 0 100px; position:relative; overflow-x:hidden; }
+  .intro{ display:grid; grid-template-columns:0.75fr 1fr; gap:64px; align-items:center; }
+  .intro-img{ position:relative; aspect-ratio:4/5; border-radius:3px; overflow:hidden; }
+  .intro-img img{ width:100%; height:100%; object-fit:cover; filter:brightness(0.78); }
+  .page-eyebrow{
+    font-family:var(--font-mono); font-size:12px; color:var(--amber); letter-spacing:1.5px;
+    text-transform:uppercase; margin-bottom:18px; display:flex; align-items:center; gap:10px;
+  }
+  .page-eyebrow::before{ content:''; width:6px; height:6px; border-radius:50%; background:var(--amber); animation:pulseGlow 2.4s ease-in-out infinite; }
+  .intro-text h1{
+    font-family:var(--font-display); font-weight:500; font-size:clamp(32px, 4.5vw, 48px);
+    line-height:1.2; margin-bottom:22px;
+  }
+  .intro-text h1 em{
+    font-style:italic; font-weight:300; color:#EAF2FF;
+    text-shadow:0 0 6px var(--navy-neon), 0 0 16px var(--navy-neon), 0 0 32px var(--navy);
+    animation:pulseNavyGlow 2.6s ease-in-out infinite;
+  }
+  .intro-text p{ color:var(--text-soft); font-size:16px; margin-bottom:16px; max-width:480px; }
+  .intro-stats{ display:flex; gap:40px; margin-top:32px; }
+  .stat strong{ display:block; font-family:var(--font-display); font-size:28px; color:var(--amber); }
+  .stat span{ font-family:var(--font-mono); font-size:11px; color:var(--text-soft); text-transform:uppercase; letter-spacing:1px; }
+
+  /* ---------- sección shared ---------- */
+  section{ padding:100px 0; position:relative; overflow-x:hidden; }
+  .section-divider{ position:relative; height:1px; max-width:1180px; margin:0 auto; background:var(--border); }
+  .section-divider::before{
+    content:''; position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+    width:5px; height:5px; border-radius:50%; background:var(--amber); box-shadow:0 0 8px 2px rgba(232,164,100,0.45);
+  }
+  .section-head{ margin-bottom:48px; max-width:560px; }
+  .section-head h2{ font-family:var(--font-display); font-weight:500; font-size:clamp(26px, 3.5vw, 38px); margin-bottom:14px; }
+  .section-head p{ color:var(--text-soft); font-size:15px; }
+
+  /* ---------- historia (con cita destacada) ---------- */
+  .story{ max-width:760px; }
+  .story p{ color:var(--text-soft); font-size:16px; margin-bottom:20px; }
+  .story blockquote{
+    font-family:var(--font-display); font-style:italic; font-size:clamp(22px, 3vw, 30px);
+    color:var(--text); line-height:1.4; border-left:2px solid var(--amber); padding-left:28px; margin:40px 0;
+  }
+
+  /* ---------- equipo ---------- */
+  .gear-grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:24px; }
+  .gear-card{
+    border:1px solid var(--border); border-radius:3px; padding:28px 24px;
+    transition:border-color .3s ease, transform .3s ease;
+  }
+  .gear-card:hover{ border-color:var(--neon); transform:translateY(-4px); }
+  .gear-cat{ font-family:var(--font-mono); font-size:11px; color:var(--neon); text-transform:uppercase; letter-spacing:1px; margin-bottom:12px; }
+  .gear-card h3{ font-family:var(--font-display); font-size:18px; font-weight:500; margin-bottom:8px; }
+  .gear-card p{ font-size:13px; color:var(--text-soft); }
+
+  /* ---------- testimonios ---------- */
+  .testimonial-grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:24px; }
+  .testimonial-card{ border:1px solid var(--border); border-radius:3px; padding:28px 24px; display:flex; flex-direction:column; }
+  .testimonial-mark{ font-family:var(--font-display); font-size:40px; color:var(--amber); line-height:1; margin-bottom:12px; }
+  .testimonial-card p{ font-size:14px; color:var(--text-soft); margin-bottom:20px; flex-grow:1; }
+  .testimonial-name{ font-family:var(--font-mono); font-size:12px; color:var(--text); }
+  .testimonial-role{ font-family:var(--font-mono); font-size:11px; color:var(--text-soft); }
+
+  /* ---------- prensa ---------- */
+  .press-list{ display:flex; flex-wrap:wrap; gap:16px 40px; align-items:center; }
+  .press-item{ font-family:var(--font-display); font-size:20px; color:var(--text-soft); letter-spacing:0.5px; transition:color .3s ease; }
+  .press-item:hover{ color:var(--text); }
+
+  /* ---------- cta final ---------- */
+  .cta{ text-align:center; padding:120px 0 140px; }
+  .cta .page-eyebrow{ justify-content:center; }
+  .cta h2{ font-family:var(--font-display); font-weight:500; font-size:clamp(28px, 4.5vw, 46px); max-width:600px; margin:0 auto 32px; line-height:1.2; }
+  .cta h2 em{ font-style:italic; color:var(--neon); font-weight:300; text-shadow:0 0 18px rgba(78,232,200,0.35); }
+  .btn-primary{
+    font-family:var(--font-mono); font-size:13px; background:var(--text); color:var(--bg);
+    padding:14px 26px; border-radius:2px; transition:background .3s ease, transform .3s ease; display:inline-block;
+  }
+  .btn-primary:hover{ background:var(--amber); transform:translateY(-2px); box-shadow:0 0 20px 2px rgba(232,164,100,0.35); }
+
+  /* ---------- footer ---------- */
+  footer{ border-top:1px solid var(--border); padding:48px 0; }
+  .footer-inner{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px; }
+  .footer-links{ display:flex; gap:28px; list-style:none; font-size:13px; color:var(--text-soft); }
+  .footer-links a:hover{ color:var(--amber); }
+  .footer-meta{ font-family:var(--font-mono); font-size:12px; color:var(--text-soft); }
+
+  /* ---------- responsive ---------- */
+  @media (max-width:860px){
+    .nav-links{ display:none; }
+    .hamburger{ display:flex; }
+    nav > .nav-cta{ display:none; }
+    .page-hero{ padding:150px 0 60px; }
+    .intro{ grid-template-columns:1fr; gap:36px; }
+    .intro-img{ order:-1; max-width:280px; margin:0 auto; }
+    section{ padding:72px 0; }
+    .gear-grid, .testimonial-grid{ grid-template-columns:1fr; }
+  }
+  @media (max-width:560px){
+    .wrap{ padding:0 20px; }
+    .intro-stats{ gap:24px; flex-wrap:wrap; }
+    .story blockquote{ padding-left:18px; font-size:20px; }
+    .press-list{ gap:14px 28px; }
+    .press-item{ font-size:16px; }
+  }
+
+  a:focus-visible, button:focus-visible{ outline:1px solid var(--amber); outline-offset:3px; }
+  @media (prefers-reduced-motion: reduce){ *{ transition:none !important; scroll-behavior:auto !important; } }
+</style>
+</head>
+<body>
+
+<header id="siteHeader">
+  <div class="wrap">
+    <nav>
+      <a href="index.html" class="logo">nicocasti_</a>
+      <ul class="nav-links">
+        <li><a href="galerias.html">Galerías</a></li>
+        <li><a href="sobre-mi.html" class="active">Sobre mí</a></li>
+        <li><a href="index.html#blog">Blog</a></li>
+        <li><a href="index.html#contacto">Contacto</a></li>
+      </ul>
+      <a href="index.html#contacto" class="nav-cta">Reservar sesión</a>
+      <button class="hamburger" id="hamburgerBtn" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobileMenu">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-brand">
+      <span class="mobile-menu-name">nicocasti_</span>
+      <span class="mobile-menu-role">fotógrafo</span>
+    </div>
+    <ul>
+      <li><a href="galerias.html">Galerías</a></li>
+      <li><a href="sobre-mi.html" class="active">Sobre mí</a></li>
+      <li><a href="index.html#blog">Blog</a></li>
+      <li><a href="index.html#contacto">Contacto</a></li>
+    </ul>
+    <a href="index.html#contacto" class="nav-cta mobile-menu-cta">Reservar sesión</a>
+  </div>
+</header>
+
+<section class="page-hero">
+  <div class="bokeh" style="width:160px;height:160px;background:var(--amber);top:8%;right:8%;animation-duration:10s;"></div>
+  <div class="bokeh" style="width:80px;height:80px;background:var(--neon);top:22%;right:20%;opacity:0.25;animation-duration:8s;"></div>
+  <div class="wrap">
+    <div class="intro">
+      <div class="intro-img reveal slide-left">
+        <img src="images/nicocasti.jpeg" alt="Retrato de nicocasti">
+      </div>
+      <div class="intro-text reveal slide-right" style="transition-delay:.15s;">
+        <p class="page-eyebrow">Sobre mí</p>
+        <h1>Diez años buscando <em>la luz correcta</em> antes de apretar el obturador.</h1>
+        <p>Soy nicocasti, fotógrafo de retrato en Buenos Aires. Trabajo con dirección de luz cinematográfica y busco que cada sesión se sienta como un momento real, no una pose armada.</p>
+        <p>Cada trabajo se planifica como una pequeña producción: locación, vestuario, referencias de luz — todo pensado antes de que la cámara se prenda.</p>
+        <div class="intro-stats">
+          <div class="stat"><strong>200+</strong><span>Sesiones</span></div>
+          <div class="stat"><strong>10</strong><span>Años</span></div>
+          <div class="stat"><strong>4</strong><span>Publicaciones</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<section id="historia">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="page-eyebrow">Trayectoria</p>
+      <h2>Cómo llegué hasta acá</h2>
+    </div>
+    <div class="story reveal" style="transition-delay:.1s;">
+      <p>Empecé sacando fotos con una réflex prestada, retratando amigos en la puerta de casa. No sabía nada de luz, pero sabía cuándo una foto se sentía viva y cuándo no.</p>
+      <blockquote>"No dirijo tanto como parece. El mejor retrato aparece cuando la persona se olvida de la cámara."</blockquote>
+      <p>Con los años, ese instinto se volvió técnica: dirección de luz, planificación de cada sesión como una pequeña producción, y un ojo cada vez más entrenado para el momento exacto en el que alguien deja de posar y empieza a mostrarse.</p>
+      <p>Hoy trabajo principalmente con retrato editorial y de estudio, colaborando con marcas, artistas y personas que simplemente quieren un retrato que se sienta propio.</p>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<section id="equipo">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="page-eyebrow">Equipo</p>
+      <h2>Con qué trabajo</h2>
+    </div>
+    <div class="gear-grid">
+      <div class="gear-card reveal">
+        <p class="gear-cat">Cámara</p>
+        <h3>Sony A7 IV</h3>
+        <p>Cuerpo principal para retrato de estudio y editorial.</p>
+      </div>
+      <div class="gear-card reveal" style="transition-delay:.08s;">
+        <p class="gear-cat">Lente</p>
+        <h3>85mm f/1.4</h3>
+        <p>El objetivo que uso en el 80% de mis retratos.</p>
+      </div>
+      <div class="gear-card reveal" style="transition-delay:.16s;">
+        <p class="gear-cat">Iluminación</p>
+        <h3>Flash de estudio + modificadores</h3>
+        <p>Softbox y grid para esculpir la luz en cada sesión.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<section id="testimonios">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="page-eyebrow">Lo que dicen</p>
+      <h2>Clientes y colaboraciones</h2>
+    </div>
+    <div class="testimonial-grid">
+      <div class="testimonial-card reveal">
+        <span class="testimonial-mark">"</span>
+        <p>Me sentí súper cómoda durante toda la sesión. Las fotos terminaron siendo mucho más naturales de lo que esperaba.</p>
+        <span class="testimonial-name">Vera M.</span>
+        <span class="testimonial-role">Sesión de retrato</span>
+      </div>
+      <div class="testimonial-card reveal" style="transition-delay:.08s;">
+        <span class="testimonial-mark">"</span>
+        <p>Dirección de luz impecable. Trabajamos juntos en una campaña y el resultado fue mejor de lo que imaginé.</p>
+        <span class="testimonial-name">Estudio Marca X</span>
+        <span class="testimonial-role">Campaña editorial</span>
+      </div>
+      <div class="testimonial-card reveal" style="transition-delay:.16s;">
+        <span class="testimonial-mark">"</span>
+        <p>Puntual, profesional, y con un ojo increíble para el detalle. Ya lo llamé para una segunda sesión.</p>
+        <span class="testimonial-name">Fer G.</span>
+        <span class="testimonial-role">Retrato de moda</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<section id="prensa">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="page-eyebrow">Prensa</p>
+      <h2>Publicaciones</h2>
+    </div>
+    <div class="press-list reveal">
+      <span class="press-item">Revista Foco</span>
+      <span class="press-item">Estudio BA</span>
+      <span class="press-item">Lente Digital</span>
+      <span class="press-item">Proyecto Retrato</span>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="wrap">
+    <p class="page-eyebrow reveal">¿Charlamos?</p>
+    <h2 class="reveal" style="transition-delay:.1s;">Coordinemos <em>tu sesión.</em></h2>
+    <a href="index.html#contacto" class="btn-primary reveal" style="transition-delay:.2s;">Reservar sesión</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-inner">
+      <span class="footer-meta">© 2026 nicocasti_ · since 1992</span>
+      <ul class="footer-links">
+        <li><a href="#">Instagram</a></li>
+        <li><a href="#">Behance</a></li>
+        <li><a href="#">Email</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const header = document.getElementById('siteHeader');
+  window.addEventListener('scroll', () => {
+    header.classList.toggle('scrolled', window.scrollY > 40);
+  }, { passive: true });
+
+  const hamburger = document.getElementById('hamburgerBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  let scrollLockY = 0;
+
+  function lockScroll(){
+    scrollLockY = window.scrollY;
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollLockY}px`;
+    document.body.style.width = '100%';
+    document.body.style.overflow = 'hidden';
+  }
+  function unlockScroll(){
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.width = '';
+    document.body.style.overflow = '';
+    window.scrollTo(0, scrollLockY);
+  }
+
+  hamburger.addEventListener('click', () => {
+    const isOpen = mobileMenu.classList.toggle('open');
+    hamburger.classList.toggle('open', isOpen);
+    hamburger.setAttribute('aria-expanded', String(isOpen));
+    if (isOpen) { lockScroll(); } else { unlockScroll(); }
+  });
+  mobileMenu.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      hamburger.classList.remove('open');
+      mobileMenu.classList.remove('open');
+      hamburger.setAttribute('aria-expanded', 'false');
+      unlockScroll();
+    });
+  });
+
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+</script>
+
+</body>
+</html>
