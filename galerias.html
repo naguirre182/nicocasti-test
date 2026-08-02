@@ -340,6 +340,59 @@
   @media (prefers-reduced-motion: reduce){
     *{ transition:none !important; scroll-behavior:auto !important; }
   }
+
+  /* ---------- whatsapp flotante ---------- */
+  .whatsapp-float{
+    position:fixed;
+    right:24px;
+    bottom:24px;
+    z-index:150;
+    width:56px; height:56px;
+    border-radius:50%;
+    background:#25D366;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 4px 20px rgba(37,211,102,0.4);
+    transition:transform .3s ease, box-shadow .3s ease;
+  }
+  .whatsapp-float::before{
+    content:'';
+    position:absolute;
+    inset:-6px;
+    border-radius:50%;
+    border:1px solid rgba(37,211,102,0.5);
+    animation:whatsappPulse 2.4s ease-out infinite;
+  }
+  @keyframes whatsappPulse{
+    0%{ transform:scale(0.9); opacity:0.8; }
+    100%{ transform:scale(1.35); opacity:0; }
+  }
+  .whatsapp-float:hover{ transform:scale(1.08); box-shadow:0 6px 26px rgba(37,211,102,0.55); }
+  .whatsapp-float svg{ width:28px; height:28px; }
+  .whatsapp-tooltip{
+    position:absolute;
+    right:68px;
+    top:50%;
+    transform:translateY(-50%);
+    background:var(--surface);
+    border:1px solid var(--border);
+    color:var(--text);
+    font-family:var(--font-mono);
+    font-size:12px;
+    white-space:nowrap;
+    padding:8px 14px;
+    border-radius:4px;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .3s ease;
+  }
+  .whatsapp-float:hover .whatsapp-tooltip{ opacity:1; }
+  @media (max-width:560px){
+    .whatsapp-float{ right:16px; bottom:16px; width:52px; height:52px; }
+    .whatsapp-tooltip{ display:none; }
+  }
+
 </style>
 </head>
 <body>
@@ -351,7 +404,7 @@
       <ul class="nav-links">
         <li><a href="galerias.html" class="active">Galerías</a></li>
         <li><a href="sobre-mi.html">Sobre mí</a></li>
-        <li><a href="index.html#blog">Blog</a></li>
+        <li><a href="blog.html">Blog</a></li>
         <li><a href="index.html#contacto">Contacto</a></li>
       </ul>
       <a href="index.html#contacto" class="nav-cta">Reservar sesión</a>
@@ -368,7 +421,7 @@
     <ul>
       <li><a href="galerias.html" class="active">Galerías</a></li>
       <li><a href="sobre-mi.html">Sobre mí</a></li>
-      <li><a href="index.html#blog">Blog</a></li>
+      <li><a href="blog.html">Blog</a></li>
       <li><a href="index.html#contacto">Contacto</a></li>
     </ul>
     <a href="index.html#contacto" class="nav-cta mobile-menu-cta">Reservar sesión</a>
@@ -467,6 +520,12 @@
     </div>
   </div>
 </footer>
+
+<a href="https://wa.me/5491100000000?text=Hola%20nico!%20Vi%20tu%20web%20y%20quiero%20consultarte%20por%20una%20sesi%C3%B3n" class="whatsapp-float" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp">
+  <span class="whatsapp-tooltip">Escribime por WhatsApp</span>
+  <svg viewBox="0 0 24 24" fill="white"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.28-1.39a9.9 9.9 0 0 0 4.76 1.21h.01c5.46 0 9.9-4.45 9.9-9.91C21.96 6.45 17.51 2 12.04 2Zm5.8 14.07c-.24.68-1.4 1.3-1.93 1.38-.5.08-1.12.11-1.8-.11-.42-.13-.95-.31-1.64-.6-2.87-1.24-4.74-4.13-4.88-4.32-.14-.19-1.17-1.55-1.17-2.96 0-1.4.74-2.09 1-2.38.26-.28.57-.35.76-.35h.55c.18 0 .42-.07.65.5.24.57.81 1.98.88 2.13.07.14.11.31.02.5-.09.19-.14.31-.28.48-.14.16-.29.36-.42.49-.14.14-.28.29-.12.57.16.28.71 1.17 1.53 1.9 1.05.94 1.94 1.23 2.22 1.37.28.14.44.12.6-.07.16-.19.68-.79.87-1.06.18-.28.37-.23.62-.14.26.09 1.63.77 1.9.91.28.14.46.21.53.33.07.12.07.68-.17 1.36Z"/></svg>
+</a>
+
 
 <div class="lightbox" id="lightbox">
   <button class="lightbox-close" id="lightboxClose" aria-label="Cerrar">✕</button>
