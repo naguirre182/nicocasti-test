@@ -1,1 +1,500 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog — nicocasti_</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,400&family=Work+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
 
+  :root{
+    --bg: #0B0B0C;
+    --surface: #17161A;
+    --surface-2: #201F24;
+    --text: #F2EEE8;
+    --text-soft: #A39C92;
+    --amber: #E8A464;
+    --blue: #4E7AA8;
+    --neon: #4EE8C8;
+    --navy: #031f48;
+    --navy-neon: #2E7DFF;
+    --border: rgba(242,238,232,0.10);
+    --font-display: 'Fraunces', serif;
+    --font-body: 'Work Sans', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html{ scroll-behavior:smooth; overflow-x:hidden; width:100%; }
+  body{
+    background:var(--bg); color:var(--text); font-family:var(--font-body);
+    font-weight:400; line-height:1.6; overflow-x:hidden; width:100%; position:relative;
+  }
+  img{ display:block; max-width:100%; }
+  a{ color:inherit; text-decoration:none; }
+  button{ font-family:inherit; cursor:pointer; }
+  .wrap{ max-width:1180px; margin:0 auto; padding:0 32px; }
+
+  @keyframes fadeUp{ from{ opacity:0; transform:translateY(26px); } to{ opacity:1; transform:translateY(0); } }
+  @keyframes pulseGlow{ 0%,100%{ box-shadow:0 0 8px 2px rgba(232,164,100,0.6); } 50%{ box-shadow:0 0 16px 5px rgba(232,164,100,0.85); } }
+  @keyframes pulseNavyGlow{
+    0%,100%{ text-shadow:0 0 6px var(--navy-neon), 0 0 16px var(--navy-neon), 0 0 32px var(--navy); }
+    50%{ text-shadow:0 0 10px var(--navy-neon), 0 0 24px var(--navy-neon), 0 0 44px var(--navy); }
+  }
+  @keyframes floatBokeh{ 0%,100%{ transform:translate(0,0) scale(1); } 50%{ transform:translate(-16px,18px) scale(1.08); } }
+
+  .reveal{ opacity:0; transform:translateY(28px); transition:opacity .7s ease, transform .7s ease; }
+  .reveal.visible{ opacity:1; transform:translateY(0); }
+
+  .bokeh{ position:absolute; border-radius:50%; filter:blur(28px); opacity:0.3; pointer-events:none; animation:floatBokeh 9s ease-in-out infinite; }
+
+  /* ---------- nav ---------- */
+  header{
+    position:fixed; top:0; left:0; right:0; z-index:100; padding:24px 0;
+    transition:background .4s ease, padding .4s ease, border-color .4s ease;
+    border-bottom:1px solid transparent;
+  }
+  header.scrolled{ background:rgba(11,11,12,0.85); backdrop-filter:blur(10px); padding:16px 0; border-bottom:1px solid var(--border); }
+  nav{ display:flex; align-items:center; justify-content:space-between; }
+  .logo{
+    font-family:var(--font-display); font-size:20px; font-weight:500; letter-spacing:0.5px;
+    color:#EAF2FF; text-shadow:0 0 6px var(--navy-neon), 0 0 16px var(--navy-neon), 0 0 32px var(--navy);
+    animation:pulseNavyGlow 2.6s ease-in-out infinite;
+  }
+  .nav-links{ display:flex; gap:40px; list-style:none; font-size:14px; letter-spacing:0.3px; }
+  .nav-links a{ position:relative; color:var(--text-soft); transition:color .3s ease; }
+  .nav-links a.active{ color:var(--text); }
+  .nav-links a:hover{ color:var(--text); }
+  .nav-links a::after{ content:''; position:absolute; left:0; bottom:-6px; width:0; height:1px; background:var(--amber); transition:width .3s ease; }
+  .nav-links a:hover::after, .nav-links a.active::after{ width:100%; }
+  .nav-cta{
+    font-size:13px; font-family:var(--font-mono); border:1px solid var(--border);
+    padding:9px 18px; border-radius:2px; transition:border-color .3s ease, background .3s ease;
+  }
+  .nav-cta:hover{ border-color:var(--neon); background:rgba(78,232,200,0.08); box-shadow:0 0 14px 1px rgba(78,232,200,0.35); }
+
+  .hamburger{ display:none; flex-direction:column; justify-content:center; gap:5px; width:32px; height:32px; background:none; border:none; padding:0; z-index:110; }
+  .hamburger span{ display:block; width:100%; height:1px; background:var(--text); transition:transform .3s ease, opacity .3s ease; }
+  .hamburger.open span:nth-child(1){ transform:translateY(6px) rotate(45deg); }
+  .hamburger.open span:nth-child(2){ opacity:0; }
+  .hamburger.open span:nth-child(3){ transform:translateY(-6px) rotate(-45deg); }
+
+  .mobile-menu{
+    position:fixed; top:0; right:-100%; height:100vh; width:min(78vw, 320px);
+    background:rgba(9,9,10,0.85); backdrop-filter:blur(20px) saturate(1.2); -webkit-backdrop-filter:blur(20px) saturate(1.2);
+    border-left:1px solid var(--border); z-index:105;
+    display:flex; flex-direction:column; justify-content:flex-start; padding:110px 32px 40px;
+    transition:right .4s ease;
+  }
+  .mobile-menu.open{ right:0; }
+  .mobile-menu-brand{ margin-bottom:52px; }
+  .mobile-menu-name{
+    display:block; font-family:var(--font-display); font-size:26px; font-weight:500;
+    color:#EAF2FF; text-shadow:0 0 8px var(--navy-neon), 0 0 22px var(--navy-neon), 0 0 44px var(--navy);
+    animation:pulseNavyGlow 2.6s ease-in-out infinite;
+  }
+  .mobile-menu-role{ display:block; font-family:var(--font-mono); font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--text-soft); margin-top:6px; }
+  .mobile-menu ul{ list-style:none; display:flex; flex-direction:column; gap:24px; margin-bottom:auto; }
+  .mobile-menu li{ opacity:0; transform:translateY(14px); transition:opacity .4s ease, transform .4s ease; }
+  .mobile-menu.open li{ opacity:1; transform:translateY(0); }
+  .mobile-menu.open li:nth-child(1){ transition-delay:.08s; }
+  .mobile-menu.open li:nth-child(2){ transition-delay:.14s; }
+  .mobile-menu.open li:nth-child(3){ transition-delay:.2s; }
+  .mobile-menu.open li:nth-child(4){ transition-delay:.26s; }
+  .mobile-menu a{ position:relative; font-family:var(--font-display); font-size:24px; color:var(--text); transition:color .3s ease; }
+  .mobile-menu a.active{ color:var(--amber); }
+  .mobile-menu ul a::after{ content:''; position:absolute; left:0; bottom:-4px; width:0; height:1px; background:var(--amber); transition:width .3s ease; }
+  .mobile-menu a:hover, .mobile-menu a:focus-visible{ color:var(--amber); }
+  .mobile-menu ul a:hover::after, .mobile-menu ul a:focus-visible::after, .mobile-menu ul a.active::after{ width:100%; }
+  .mobile-menu-cta{
+    align-self:flex-start; display:inline-block; background:var(--amber); color:var(--bg); border:none;
+    font-family:var(--font-mono); font-size:14px; font-weight:500; padding:15px 28px; border-radius:2px;
+    box-shadow:0 0 20px 2px rgba(232,164,100,0.25); opacity:0; transform:translateY(14px);
+    transition:opacity .4s ease .32s, transform .4s ease .32s, box-shadow .3s ease, background .3s ease;
+  }
+  .mobile-menu-cta:hover{ background:#F0B378; box-shadow:0 0 26px 4px rgba(232,164,100,0.4); }
+  .mobile-menu.open .mobile-menu-cta{ opacity:1; transform:translateY(0); }
+
+  /* ---------- page intro ---------- */
+  .page-hero{ padding:200px 0 56px; position:relative; }
+  .page-eyebrow{
+    font-family:var(--font-mono); font-size:12px; color:var(--amber); letter-spacing:1.5px;
+    text-transform:uppercase; margin-bottom:18px; display:flex; align-items:center; gap:10px;
+  }
+  .page-eyebrow::before{ content:''; width:6px; height:6px; border-radius:50%; background:var(--amber); animation:pulseGlow 2.4s ease-in-out infinite; }
+  .page-hero h1{
+    font-family:var(--font-display); font-weight:500; font-size:clamp(38px, 6vw, 60px);
+    line-height:1.05; letter-spacing:-0.5px; margin-bottom:18px; max-width:640px;
+  }
+  .page-hero h1 em{
+    font-style:italic; font-weight:300; color:#EAF2FF;
+    text-shadow:0 0 8px var(--navy-neon), 0 0 22px var(--navy-neon), 0 0 44px var(--navy);
+    animation:pulseNavyGlow 2.6s ease-in-out infinite;
+  }
+  .page-hero p{ color:var(--text-soft); max-width:460px; font-size:15px; }
+
+  /* ---------- filtros ---------- */
+  .filters{ display:flex; flex-wrap:wrap; gap:10px; padding:8px 0 56px; }
+  .filter-btn{
+    font-family:var(--font-mono); font-size:12px; letter-spacing:0.5px;
+    background:none; border:1px solid var(--border); color:var(--text-soft);
+    padding:9px 18px; border-radius:999px; transition:all .3s ease;
+  }
+  .filter-btn:hover{ border-color:var(--text-soft); color:var(--text); }
+  .filter-btn.active{ background:var(--amber); border-color:var(--amber); color:var(--bg); font-weight:500; }
+
+  /* ---------- post destacado ---------- */
+  .featured-post{
+    display:grid; grid-template-columns:1.1fr 1fr; gap:48px; align-items:center;
+    border:1px solid var(--border); border-radius:4px; overflow:hidden; margin-bottom:64px;
+  }
+  .featured-img{ aspect-ratio:4/3; overflow:hidden; }
+  .featured-img img{ width:100%; height:100%; object-fit:cover; filter:brightness(0.82); }
+  .featured-body{ padding:12px 40px 12px 0; }
+  .featured-meta{ font-family:var(--font-mono); font-size:11px; color:var(--amber); text-transform:uppercase; letter-spacing:1px; margin-bottom:14px; }
+  .featured-body h2{ font-family:var(--font-display); font-weight:500; font-size:clamp(24px, 3vw, 32px); margin-bottom:14px; line-height:1.25; }
+  .featured-body p{ font-size:14px; color:var(--text-soft); margin-bottom:20px; }
+  .featured-link{ font-family:var(--font-mono); font-size:12px; color:var(--text); border-bottom:1px solid var(--border); padding-bottom:4px; transition:color .3s ease, border-color .3s ease; }
+  .featured-link:hover{ color:var(--amber); border-color:var(--amber); }
+
+  /* ---------- grilla de posts ---------- */
+  .blog-grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:28px; padding-bottom:48px; }
+  .post-card{
+    border:1px solid var(--border); border-radius:3px; overflow:hidden;
+    transition:border-color .3s ease, transform .3s ease, opacity .4s ease;
+  }
+  .post-card.filtered-out{ display:none; }
+  .post-card:hover{ border-color:var(--amber); transform:translateY(-4px); }
+  .post-img{ aspect-ratio:16/10; overflow:hidden; }
+  .post-img img{ width:100%; height:100%; object-fit:cover; filter:brightness(0.8); transition:transform .6s ease; }
+  .post-card:hover .post-img img{ transform:scale(1.06); }
+  .post-body{ padding:22px; }
+  .post-meta{ font-family:var(--font-mono); font-size:11px; color:var(--amber); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; }
+  .post-body h3{ font-family:var(--font-display); font-weight:500; font-size:19px; margin-bottom:8px; line-height:1.3; }
+  .post-body p{ font-size:13px; color:var(--text-soft); }
+
+  /* ---------- cargar más ---------- */
+  .load-more-wrap{ display:flex; justify-content:center; padding:24px 0 100px; }
+  .load-more-btn{
+    font-family:var(--font-mono); font-size:13px; color:var(--text);
+    border:1px solid var(--border); padding:14px 32px; border-radius:2px;
+    transition:border-color .3s ease, background .3s ease;
+  }
+  .load-more-btn:hover{ border-color:var(--neon); background:rgba(78,232,200,0.08); }
+  .load-more-btn:disabled{ opacity:0.4; pointer-events:none; }
+
+  /* ---------- cta final ---------- */
+  .cta{ text-align:center; padding:100px 0 140px; border-top:1px solid var(--border); }
+  .cta .page-eyebrow{ justify-content:center; }
+  .cta h2{ font-family:var(--font-display); font-weight:500; font-size:clamp(28px, 4.5vw, 46px); max-width:600px; margin:0 auto 32px; line-height:1.2; }
+  .cta h2 em{ font-style:italic; color:var(--neon); font-weight:300; text-shadow:0 0 18px rgba(78,232,200,0.35); }
+  .btn-primary{
+    font-family:var(--font-mono); font-size:13px; background:var(--text); color:var(--bg);
+    padding:14px 26px; border-radius:2px; transition:background .3s ease, transform .3s ease; display:inline-block;
+  }
+  .btn-primary:hover{ background:var(--amber); transform:translateY(-2px); box-shadow:0 0 20px 2px rgba(232,164,100,0.35); }
+
+  /* ---------- footer ---------- */
+  footer{ border-top:1px solid var(--border); padding:48px 0; }
+  .footer-inner{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px; }
+  .footer-links{ display:flex; gap:28px; list-style:none; font-size:13px; color:var(--text-soft); }
+  .footer-links a:hover{ color:var(--amber); }
+  .footer-meta{ font-family:var(--font-mono); font-size:12px; color:var(--text-soft); }
+
+  /* ---------- responsive ---------- */
+  @media (max-width:860px){
+    .nav-links{ display:none; }
+    .hamburger{ display:flex; }
+    nav > .nav-cta{ display:none; }
+    .page-hero{ padding:160px 0 40px; }
+    .featured-post{ grid-template-columns:1fr; }
+    .featured-body{ padding:24px; }
+    .blog-grid{ grid-template-columns:1fr 1fr; gap:18px; }
+  }
+  @media (max-width:560px){
+    .wrap{ padding:0 20px; }
+    .blog-grid{ grid-template-columns:1fr; }
+    .filters{ gap:8px; }
+    .filter-btn{ padding:8px 14px; font-size:11px; }
+  }
+
+  a:focus-visible, button:focus-visible{ outline:1px solid var(--amber); outline-offset:3px; }
+  @media (prefers-reduced-motion: reduce){ *{ transition:none !important; scroll-behavior:auto !important; } }
+
+  /* ---------- whatsapp flotante ---------- */
+  .whatsapp-float{
+    position:fixed;
+    right:24px;
+    bottom:24px;
+    z-index:150;
+    width:56px; height:56px;
+    border-radius:50%;
+    background:#25D366;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 4px 20px rgba(37,211,102,0.4);
+    transition:transform .3s ease, box-shadow .3s ease;
+  }
+  .whatsapp-float::before{
+    content:'';
+    position:absolute;
+    inset:-6px;
+    border-radius:50%;
+    border:1px solid rgba(37,211,102,0.5);
+    animation:whatsappPulse 2.4s ease-out infinite;
+  }
+  @keyframes whatsappPulse{
+    0%{ transform:scale(0.9); opacity:0.8; }
+    100%{ transform:scale(1.35); opacity:0; }
+  }
+  .whatsapp-float:hover{ transform:scale(1.08); box-shadow:0 6px 26px rgba(37,211,102,0.55); }
+  .whatsapp-float svg{ width:28px; height:28px; }
+  .whatsapp-tooltip{
+    position:absolute;
+    right:68px;
+    top:50%;
+    transform:translateY(-50%);
+    background:var(--surface);
+    border:1px solid var(--border);
+    color:var(--text);
+    font-family:var(--font-mono);
+    font-size:12px;
+    white-space:nowrap;
+    padding:8px 14px;
+    border-radius:4px;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .3s ease;
+  }
+  .whatsapp-float:hover .whatsapp-tooltip{ opacity:1; }
+  @media (max-width:560px){
+    .whatsapp-float{ right:16px; bottom:16px; width:52px; height:52px; }
+    .whatsapp-tooltip{ display:none; }
+  }
+
+</style>
+</head>
+<body>
+
+<header id="siteHeader">
+  <div class="wrap">
+    <nav>
+      <a href="index.html" class="logo">nicocasti_</a>
+      <ul class="nav-links">
+        <li><a href="galerias.html">Galerías</a></li>
+        <li><a href="sobre-mi.html">Sobre mí</a></li>
+        <li><a href="blog.html" class="active">Blog</a></li>
+        <li><a href="index.html#contacto">Contacto</a></li>
+      </ul>
+      <a href="index.html#contacto" class="nav-cta">Reservar sesión</a>
+      <button class="hamburger" id="hamburgerBtn" aria-label="Abrir menú" aria-expanded="false" aria-controls="mobileMenu">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-brand">
+      <span class="mobile-menu-name">nicocasti_</span>
+      <span class="mobile-menu-role">fotógrafo</span>
+    </div>
+    <ul>
+      <li><a href="galerias.html">Galerías</a></li>
+      <li><a href="sobre-mi.html">Sobre mí</a></li>
+      <li><a href="blog.html" class="active">Blog</a></li>
+      <li><a href="index.html#contacto">Contacto</a></li>
+    </ul>
+    <a href="index.html#contacto" class="nav-cta mobile-menu-cta">Reservar sesión</a>
+  </div>
+</header>
+
+<section class="page-hero">
+  <div class="bokeh" style="width:160px;height:160px;background:var(--amber);top:10%;right:10%;animation-duration:10s;"></div>
+  <div class="bokeh" style="width:80px;height:80px;background:var(--neon);top:28%;right:22%;opacity:0.25;animation-duration:8s;"></div>
+  <div class="wrap">
+    <p class="page-eyebrow reveal">Diario</p>
+    <h1 class="reveal" style="transition-delay:.1s;">Detrás de <em>cada sesión.</em></h1>
+    <p class="reveal" style="transition-delay:.2s;">Técnica, proceso y reflexiones sobre el oficio de retratar personas.</p>
+  </div>
+</section>
+
+<div class="wrap">
+  <div class="featured-post reveal">
+    <div class="featured-img">
+      <img src="https://picsum.photos/id/1074/900/700" alt="Cómo armamos la sesión de Vera">
+    </div>
+    <div class="featured-body">
+      <p class="featured-meta">Destacado · Detrás de escena</p>
+      <h2>Cómo armamos la sesión de Vera en 20 minutos de luz</h2>
+      <p>La ventana de luz dorada es corta, y perderla significa reprogramar todo. Así planificamos cada toma antes de que el sol se ponga, minuto a minuto.</p>
+      <a href="#" class="featured-link">Leer nota completa →</a>
+    </div>
+  </div>
+
+  <div class="filters reveal">
+    <button class="filter-btn active" data-filter="all">Todas</button>
+    <button class="filter-btn" data-filter="escena">Detrás de escena</button>
+    <button class="filter-btn" data-filter="tecnica">Técnica</button>
+    <button class="filter-btn" data-filter="reflexion">Reflexión</button>
+  </div>
+
+  <div class="blog-grid" id="blogGrid">
+    <a href="#" class="post-card reveal" data-category="tecnica">
+      <div class="post-img"><img src="https://picsum.photos/id/1080/500/320" alt=""></div>
+      <div class="post-body">
+        <p class="post-meta">Técnica</p>
+        <h3>Tres formas de usar luces de neón en retrato</h3>
+        <p>Color, contraste y una fuente de luz que no necesita difusor.</p>
+      </div>
+    </a>
+    <a href="#" class="post-card reveal" data-category="reflexion">
+      <div class="post-img"><img src="https://picsum.photos/id/1084/500/320" alt=""></div>
+      <div class="post-body">
+        <p class="post-meta">Reflexión</p>
+        <h3>Por qué dirijo menos de lo que parece</h3>
+        <p>El mejor retrato aparece cuando la persona se olvida de la cámara.</p>
+      </div>
+    </a>
+    <a href="#" class="post-card reveal" data-category="escena">
+      <div class="post-img"><img src="https://picsum.photos/id/1062/500/320" alt=""></div>
+      <div class="post-body">
+        <p class="post-meta">Detrás de escena</p>
+        <h3>Lo que pasó antes de la foto de Nico</h3>
+        <p>Dos horas de prueba de luz para un retrato de 15 minutos.</p>
+      </div>
+    </a>
+    <a href="#" class="post-card reveal" data-category="tecnica">
+      <div class="post-img"><img src="https://picsum.photos/id/103/500/320" alt=""></div>
+      <div class="post-body">
+        <p class="post-meta">Técnica</p>
+        <h3>Cómo elijo el objetivo según la distancia emocional</h3>
+        <p>El 85mm no es solo una elección técnica, también es una decisión sobre la cercanía.</p>
+      </div>
+    </a>
+    <a href="#" class="post-card reveal" data-category="reflexion">
+      <div class="post-img"><img src="https://picsum.photos/id/104/500/320" alt=""></div>
+      <div class="post-body">
+        <p class="post-meta">Reflexión</p>
+        <h3>Diez años, la misma pregunta antes de cada sesión</h3>
+        <p>¿Qué es lo que esta persona no muestra todos los días?</p>
+      </div>
+    </a>
+    <a href="#" class="post-card reveal" data-category="escena">
+      <div class="post-img"><img src="https://picsum.photos/id/106/500/320" alt=""></div>
+      <div class="post-body">
+        <p class="post-meta">Detrás de escena</p>
+        <h3>El día que se cortó la luz a mitad de sesión</h3>
+        <p>Cómo improvisamos con una linterna y una sábana blanca.</p>
+      </div>
+    </a>
+  </div>
+
+  <div class="load-more-wrap">
+    <button class="load-more-btn" id="loadMoreBtn">Cargar más notas</button>
+  </div>
+</div>
+
+<section class="cta">
+  <div class="wrap">
+    <p class="page-eyebrow reveal">¿Te gustó lo que leíste?</p>
+    <h2 class="reveal" style="transition-delay:.1s;">Coordinemos <em>tu sesión.</em></h2>
+    <a href="index.html#contacto" class="btn-primary reveal" style="transition-delay:.2s;">Reservar sesión</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-inner">
+      <span class="footer-meta">© 2026 nicocasti_ · since 1992</span>
+      <ul class="footer-links">
+        <li><a href="#">Instagram</a></li>
+        <li><a href="#">Behance</a></li>
+        <li><a href="#">Email</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<a href="https://wa.me/5491100000000?text=Hola%20nico!%20Vi%20tu%20web%20y%20quiero%20consultarte%20por%20una%20sesi%C3%B3n" class="whatsapp-float" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp">
+  <span class="whatsapp-tooltip">Escribime por WhatsApp</span>
+  <svg viewBox="0 0 24 24" fill="white"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.28-1.39a9.9 9.9 0 0 0 4.76 1.21h.01c5.46 0 9.9-4.45 9.9-9.91C21.96 6.45 17.51 2 12.04 2Zm5.8 14.07c-.24.68-1.4 1.3-1.93 1.38-.5.08-1.12.11-1.8-.11-.42-.13-.95-.31-1.64-.6-2.87-1.24-4.74-4.13-4.88-4.32-.14-.19-1.17-1.55-1.17-2.96 0-1.4.74-2.09 1-2.38.26-.28.57-.35.76-.35h.55c.18 0 .42-.07.65.5.24.57.81 1.98.88 2.13.07.14.11.31.02.5-.09.19-.14.31-.28.48-.14.16-.29.36-.42.49-.14.14-.28.29-.12.57.16.28.71 1.17 1.53 1.9 1.05.94 1.94 1.23 2.22 1.37.28.14.44.12.6-.07.16-.19.68-.79.87-1.06.18-.28.37-.23.62-.14.26.09 1.63.77 1.9.91.28.14.46.21.53.33.07.12.07.68-.17 1.36Z"/></svg>
+</a>
+
+
+<script>
+  const header = document.getElementById('siteHeader');
+  window.addEventListener('scroll', () => {
+    header.classList.toggle('scrolled', window.scrollY > 40);
+  }, { passive: true });
+
+  const hamburger = document.getElementById('hamburgerBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  let scrollLockY = 0;
+
+  function lockScroll(){
+    scrollLockY = window.scrollY;
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollLockY}px`;
+    document.body.style.width = '100%';
+    document.body.style.overflow = 'hidden';
+  }
+  function unlockScroll(){
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.width = '';
+    document.body.style.overflow = '';
+    window.scrollTo(0, scrollLockY);
+  }
+
+  hamburger.addEventListener('click', () => {
+    const isOpen = mobileMenu.classList.toggle('open');
+    hamburger.classList.toggle('open', isOpen);
+    hamburger.setAttribute('aria-expanded', String(isOpen));
+    if (isOpen) { lockScroll(); } else { unlockScroll(); }
+  });
+  mobileMenu.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      hamburger.classList.remove('open');
+      mobileMenu.classList.remove('open');
+      hamburger.setAttribute('aria-expanded', 'false');
+      unlockScroll();
+    });
+  });
+
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+  // Filtros por categoría
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const posts = document.querySelectorAll('.post-card');
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const filter = btn.dataset.filter;
+      posts.forEach(post => {
+        const match = filter === 'all' || post.dataset.category === filter;
+        post.classList.toggle('filtered-out', !match);
+      });
+    });
+  });
+
+  // Cargar más (simulado — en WordPress esto se reemplaza por paginación real)
+  const loadMoreBtn = document.getElementById('loadMoreBtn');
+  loadMoreBtn.addEventListener('click', () => {
+    loadMoreBtn.textContent = 'No hay más notas por ahora';
+    loadMoreBtn.disabled = true;
+  });
+</script>
+
+</body>
+</html>
