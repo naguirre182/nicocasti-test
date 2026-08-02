@@ -574,7 +574,58 @@
   .cta h2 em{ font-style:italic; color:var(--neon); font-weight:300; text-shadow:0 0 18px rgba(78,232,200,0.35); }
   .cta-actions{ display:flex; gap:20px; justify-content:center; }
 
-  /* ---------- footer ---------- */
+  /* ---------- FAQ ---------- */
+  .faq-list{ max-width:760px; }
+  .faq-item{
+    border-bottom:1px solid var(--border);
+  }
+  .faq-question{
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:20px;
+    padding:26px 0;
+    background:none;
+    border:none;
+    text-align:left;
+    font-family:var(--font-display);
+    font-size:18px;
+    font-weight:500;
+    color:var(--text);
+    cursor:pointer;
+  }
+  .faq-question:hover{ color:var(--amber); }
+  .faq-icon{
+    flex-shrink:0;
+    width:22px; height:22px;
+    border-radius:50%;
+    border:1px solid var(--border);
+    position:relative;
+    transition:border-color .3s ease, transform .3s ease;
+  }
+  .faq-icon::before, .faq-icon::after{
+    content:'';
+    position:absolute;
+    left:50%; top:50%;
+    background:var(--text-soft);
+    transition:transform .3s ease, background .3s ease;
+  }
+  .faq-icon::before{ width:9px; height:1px; transform:translate(-50%,-50%); }
+  .faq-icon::after{ width:1px; height:9px; transform:translate(-50%,-50%); }
+  .faq-item.open .faq-icon{ border-color:var(--amber); transform:rotate(45deg); }
+  .faq-item.open .faq-icon::before, .faq-item.open .faq-icon::after{ background:var(--amber); }
+  .faq-answer{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .4s ease;
+  }
+  .faq-answer p{
+    color:var(--text-soft);
+    font-size:14px;
+    padding-bottom:26px;
+    max-width:600px;
+  }
   footer{
     border-top:1px solid var(--border);
     padding:48px 0;
@@ -640,6 +691,59 @@
   @media (prefers-reduced-motion: reduce){
     *{ transition:none !important; scroll-behavior:auto !important; }
   }
+
+  /* ---------- whatsapp flotante ---------- */
+  .whatsapp-float{
+    position:fixed;
+    right:24px;
+    bottom:24px;
+    z-index:150;
+    width:56px; height:56px;
+    border-radius:50%;
+    background:#25D366;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 4px 20px rgba(37,211,102,0.4);
+    transition:transform .3s ease, box-shadow .3s ease;
+  }
+  .whatsapp-float::before{
+    content:'';
+    position:absolute;
+    inset:-6px;
+    border-radius:50%;
+    border:1px solid rgba(37,211,102,0.5);
+    animation:whatsappPulse 2.4s ease-out infinite;
+  }
+  @keyframes whatsappPulse{
+    0%{ transform:scale(0.9); opacity:0.8; }
+    100%{ transform:scale(1.35); opacity:0; }
+  }
+  .whatsapp-float:hover{ transform:scale(1.08); box-shadow:0 6px 26px rgba(37,211,102,0.55); }
+  .whatsapp-float svg{ width:28px; height:28px; }
+  .whatsapp-tooltip{
+    position:absolute;
+    right:68px;
+    top:50%;
+    transform:translateY(-50%);
+    background:var(--surface);
+    border:1px solid var(--border);
+    color:var(--text);
+    font-family:var(--font-mono);
+    font-size:12px;
+    white-space:nowrap;
+    padding:8px 14px;
+    border-radius:4px;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .3s ease;
+  }
+  .whatsapp-float:hover .whatsapp-tooltip{ opacity:1; }
+  @media (max-width:560px){
+    .whatsapp-float{ right:16px; bottom:16px; width:52px; height:52px; }
+    .whatsapp-tooltip{ display:none; }
+  }
+
 </style>
 </head>
 <body>
@@ -651,7 +755,7 @@
       <ul class="nav-links">
         <li><a href="galerias.html">Galerías</a></li>
         <li><a href="sobre-mi.html">Sobre mí</a></li>
-        <li><a href="#blog">Blog</a></li>
+        <li><a href="blog.html">Blog</a></li>
         <li><a href="#contacto">Contacto</a></li>
       </ul>
       <a href="#contacto" class="nav-cta">Reservar sesión</a>
@@ -668,7 +772,7 @@
     <ul>
       <li><a href="galerias.html">Galerías</a></li>
       <li><a href="sobre-mi.html">Sobre mí</a></li>
-      <li><a href="#blog">Blog</a></li>
+      <li><a href="blog.html">Blog</a></li>
       <li><a href="#contacto">Contacto</a></li>
     </ul>
     <a href="#contacto" class="nav-cta mobile-menu-cta">Reservar sesión</a>
@@ -796,13 +900,74 @@
 
 <div class="section-divider"></div>
 
+<section id="faq">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div>
+        <p class="section-eyebrow">Antes de escribirme</p>
+        <h2>Preguntas frecuentes</h2>
+      </div>
+      <p>Lo que más me preguntan antes de reservar una sesión.</p>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item reveal">
+        <button class="faq-question">
+          ¿Cuánto sale una sesión?
+          <span class="faq-icon"></span>
+        </button>
+        <div class="faq-answer">
+          <p>Depende del tipo de sesión (retrato individual, editorial, campaña) y del tiempo que lleve. Escribime por WhatsApp contándome qué tenés en mente y te paso una cotización.</p>
+        </div>
+      </div>
+      <div class="faq-item reveal" style="transition-delay:.06s;">
+        <button class="faq-question">
+          ¿Cuánto dura una sesión?
+          <span class="faq-icon"></span>
+        </button>
+        <div class="faq-answer">
+          <p>En general entre 1 y 2 horas, dependiendo de la cantidad de looks o locaciones. Las sesiones de estudio suelen ser más cortas que las de exterior.</p>
+        </div>
+      </div>
+      <div class="faq-item reveal" style="transition-delay:.12s;">
+        <button class="faq-question">
+          ¿Hacés sesiones fuera de Buenos Aires?
+          <span class="faq-icon"></span>
+        </button>
+        <div class="faq-answer">
+          <p>Sí, viajo para sesiones fuera de CABA y GBA. El costo de traslado se cotiza aparte según la distancia.</p>
+        </div>
+      </div>
+      <div class="faq-item reveal" style="transition-delay:.18s;">
+        <button class="faq-question">
+          ¿Con cuánta anticipación tengo que reservar?
+          <span class="faq-icon"></span>
+        </button>
+        <div class="faq-answer">
+          <p>Recomiendo escribir con al menos una semana de anticipación, sobre todo si buscás una fecha de fin de semana. En temporada alta puede haber más demora.</p>
+        </div>
+      </div>
+      <div class="faq-item reveal" style="transition-delay:.24s;">
+        <button class="faq-question">
+          ¿Qué incluye la entrega final?
+          <span class="faq-icon"></span>
+        </button>
+        <div class="faq-answer">
+          <p>Un set de fotos editadas en alta resolución, entregadas por link de descarga. La cantidad exacta y el tiempo de entrega se acuerdan antes de la sesión.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
 <section class="cta" id="contacto">
   <div class="wrap">
     <p class="section-eyebrow reveal" style="transition-delay:0s;">Reservá tu sesión</p>
     <h2 class="reveal" style="transition-delay:.15s;">Hablemos de tu <em>próximo retrato.</em></h2>
     <div class="cta-actions reveal" style="transition-delay:.3s;">
       <a href="mailto:hola@ejemplo.com" class="btn-primary">Escribir un email</a>
-      <a href="https://wa.me/5491100000000" class="btn-ghost">WhatsApp directo →</a>
+      <a href="https://wa.me/5491100000000?text=Hola%20nico!%20Vi%20tu%20web%20y%20quiero%20consultarte%20por%20una%20sesi%C3%B3n" class="btn-ghost">WhatsApp directo →</a>
     </div>
   </div>
 </section>
@@ -819,6 +984,12 @@
     </div>
   </div>
 </footer>
+
+<a href="https://wa.me/5491100000000?text=Hola%20nico!%20Vi%20tu%20web%20y%20quiero%20consultarte%20por%20una%20sesi%C3%B3n" class="whatsapp-float" target="_blank" rel="noopener" aria-label="Escribir por WhatsApp">
+  <span class="whatsapp-tooltip">Escribime por WhatsApp</span>
+  <svg viewBox="0 0 24 24" fill="white"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.28-1.39a9.9 9.9 0 0 0 4.76 1.21h.01c5.46 0 9.9-4.45 9.9-9.91C21.96 6.45 17.51 2 12.04 2Zm5.8 14.07c-.24.68-1.4 1.3-1.93 1.38-.5.08-1.12.11-1.8-.11-.42-.13-.95-.31-1.64-.6-2.87-1.24-4.74-4.13-4.88-4.32-.14-.19-1.17-1.55-1.17-2.96 0-1.4.74-2.09 1-2.38.26-.28.57-.35.76-.35h.55c.18 0 .42-.07.65.5.24.57.81 1.98.88 2.13.07.14.11.31.02.5-.09.19-.14.31-.28.48-.14.16-.29.36-.42.49-.14.14-.28.29-.12.57.16.28.71 1.17 1.53 1.9 1.05.94 1.94 1.23 2.22 1.37.28.14.44.12.6-.07.16-.19.68-.79.87-1.06.18-.28.37-.23.62-.14.26.09 1.63.77 1.9.91.28.14.46.21.53.33.07.12.07.68-.17 1.36Z"/></svg>
+</a>
+
 
 <script>
   const header = document.getElementById('siteHeader');
@@ -871,6 +1042,23 @@
   }, { threshold: 0.15 });
 
   document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+  // Acordeón de FAQ
+  document.querySelectorAll('.faq-item').forEach(item => {
+    const question = item.querySelector('.faq-question');
+    const answer = item.querySelector('.faq-answer');
+    question.addEventListener('click', () => {
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(open => {
+        open.classList.remove('open');
+        open.querySelector('.faq-answer').style.maxHeight = null;
+      });
+      if (!isOpen) {
+        item.classList.add('open');
+        answer.style.maxHeight = answer.scrollHeight + 'px';
+      }
+    });
+  });
 </script>
 
 </body>
